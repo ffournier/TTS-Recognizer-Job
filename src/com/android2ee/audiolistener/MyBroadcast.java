@@ -1,61 +1,15 @@
 package com.android2ee.audiolistener;
 
-import java.util.HashMap;
-import java.util.Locale;
-
 import android.bluetooth.BluetoothHeadset;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
 import android.os.Bundle;
 import android.provider.Telephony;
-import android.speech.tts.TextToSpeech;
-import android.speech.tts.TextToSpeech.OnUtteranceCompletedListener;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
 public class MyBroadcast extends BroadcastReceiver {
-	
-	TextToSpeech ttobj;
-	String message;
-	Boolean isInit;
-	Context context;
-	
-	private MainActivity activity;
-	
-	public MyBroadcast() {
-		super();
-		isInit = false;
-	}
-
-	public MyBroadcast(MainActivity activity, Context context) {
-		super();
-		isInit = false;
-		this.context = context;
-		this.activity = activity;
-		initTextToSpeech();
-	}
-
-	
-	private void initTextToSpeech() {
-		ttobj = new TextToSpeech(context.getApplicationContext(), 
-	      	      new TextToSpeech.OnInitListener() {
-	      				@Override
-	      				public void onInit(int status) {
-	      					if(status != TextToSpeech.ERROR){
-	             	            ttobj.setLanguage(Locale.FRENCH);
-	             	            isInit = true;
-	             	            if (message != null) {
-	             	            	speakTextInfo("", message);
-	             	            	message = null;
-	             	            }
-	      					}   
-	      				}
-	      		  }
-	      	);
-	}
-	
 	
 	@Override
 	public void onReceive(Context context, Intent intent) {
@@ -78,13 +32,10 @@ public class MyBroadcast extends BroadcastReceiver {
 		} else if (intent.getAction().equalsIgnoreCase(Telephony.Sms.Intents.SMS_RECEIVED_ACTION)) {
 			Log.i("TAG", "action : " + intent.getAction());
 			// get SMS received
-			if (ttobj == null) {
-				this.context = context;
-				initTextToSpeech();
-			}
 			receivedSMS(context, intent);
 		} else {
 			Log.w("TAG", "action unknwon : " + intent.getAction());
+			//sendMessage(context, "Test pour savoir si cela passe", montel);
 		}
 	}
 	
@@ -107,14 +58,10 @@ public class MyBroadcast extends BroadcastReceiver {
                     String message = currentMessage.getDisplayMessageBody();
  
                     Log.e("SmsReceiver", "senderNum: "+ senderNum + "; message: " + message);
-                     
-                    if (isInit) {
-                    	//String name = getNum(senderNum);
-                    	speakTextInfo(senderNum, message);
-                    } else {
-                    	this.message = message;
-                    }
+                    sendMessage(context, message, senderNum);
+        			break;
                 } // end for loop
+                
               } // bundle is null
  
         } catch (Exception e) {
@@ -123,34 +70,11 @@ public class MyBroadcast extends BroadcastReceiver {
         }
 	}
 	
-	public void speakTextInfo(String name, String message){
-    	Log.e("TAG", "name " + name);
-    	this.message = message;
-    	HashMap<String, String> myHashAlarm = new HashMap<String, String>();
-        myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_STREAM, String.valueOf(AudioManager.STREAM_ALARM));
-        myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "Message");
-        
-    	ttobj.speak(context.getString(R.string.info_name, name), TextToSpeech.QUEUE_FLUSH, myHashAlarm);
-    	ttobj.setOnUtteranceCompletedListener(new OnUtteranceCompletedListener() {
-			
-			@Override
-			public void onUtteranceCompleted(String utteranceId) {
-				Log.e("TAG", "passe par là " + utteranceId);
-				askAnswer();
-			}
-		});
-    	
-    }
-    
-    private void askAnswer() {
-    	if (activity != null) {
-    		activity.askAnswer(message);
-    	}
-    	
-    }
-    
-    public void speakText(String message){
-    	ttobj.speak(message, TextToSpeech.QUEUE_FLUSH, null);
-    	this.message = null;
-    }
+	private void sendMessage(Context context, String message, String senderNum) {
+		Intent service = new Intent(context, MyService.class);
+		service.putExtra(MyService.KEY_MESSAGE, message);
+		service.putExtra(MyService.KEY_NAME, senderNum);
+		context.startService(service); 
+	}
+	
 }
