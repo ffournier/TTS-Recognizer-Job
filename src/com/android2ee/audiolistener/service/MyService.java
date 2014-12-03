@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 
-import com.android2ee.audiolistener.R;
-import com.android2ee.audiolistener.R.string;
-
 import android.app.Service;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -24,7 +21,8 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnUtteranceCompletedListener;
 import android.telephony.SmsManager;
 import android.util.Log;
-import android.widget.Toast;
+
+import com.android2ee.audiolistener.R;
 
 public class MyService extends Service implements RecognitionListener {
 	
@@ -37,15 +35,14 @@ public class MyService extends Service implements RecognitionListener {
 	private static final String UTTERANCE_MESSAGE_NOTHING = "com.android2ee.audiolistener.message_nothing";
 	
 	TextToSpeech ttobj;
-	String message;
-	String phoneNUmber;
-	String name;
 	SpeechRecognizer recognizer;
 	Intent intentRecognizer;
 	
 	Handler mHandler = new Handler();
 	
 	StateMessage state;
+	
+	private ArrayList<POJOMessage> myQueueMessage = new ArrayList<POJOMessage>();
 	
 	private enum StateMessage {
 		DEFAULT,
@@ -72,7 +69,8 @@ public class MyService extends Service implements RecognitionListener {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		message = null;
+		state = StateMessage.NOTHING;
+		
 		initTextToSpeech();
 		initRecognizer();
 		
@@ -96,9 +94,8 @@ public class MyService extends Service implements RecognitionListener {
 	      				public void onInit(int status) {
 	      					if(status != TextToSpeech.ERROR){
 	             	            ttobj.setLanguage(Locale.FRENCH);
-	             	            Log.e("TAG", "init TTS " + message);
-	             	            if (message != null) {
-	             	            	speakText(getString(R.string.info_name, name));
+	             	            if (isInProgress()) {
+	             	            	speakText(getString(R.string.info_name, getNameinProgress()));
 	             	            }
 	      					}   
 	      				}
@@ -130,15 +127,54 @@ public class MyService extends Service implements RecognitionListener {
 	{
 		int result =  super.onStartCommand(intent, flags, startId);
 		if (intent != null) {
-			this.message = intent.getStringExtra(KEY_MESSAGE);
-			this.phoneNUmber = intent.getStringExtra(KEY_NAME);
-			this.name = getContact(phoneNUmber);
-			state = StateMessage.DEFAULT;
-			speakText(getString(R.string.info_name, name));
+			String message = intent.getStringExtra(KEY_MESSAGE);
+			String phoneNumber = intent.getStringExtra(KEY_NAME);
+			String name = getContact(phoneNumber);
+			
+			myQueueMessage.add(new POJOMessage(message, phoneNumber, name));
+			newMessageInQueue();
 		} else {
 			Log.w("TAG", "No Intent");
 		}
 		return result;
+	}
+	
+	private boolean isInProgress() {
+		return state != StateMessage.NOTHING;
+	}
+	
+	
+	private void deleteProgressMessage() {
+		if (myQueueMessage.size() > 0) {
+			myQueueMessage.remove(0);
+		}
+	}
+	
+	private String getNameinProgress() {
+		if (myQueueMessage.size() > 0) {
+			POJOMessage mes = myQueueMessage.get(0);
+			String result = mes.name;
+			if (result == null || result.length() == 0) {
+				result = mes.phoneNumber;
+			}
+		}
+		return null;
+	}
+	
+	private String getPhoneNumberinProgress() {
+		if (myQueueMessage.size() > 0) {
+			POJOMessage mes = myQueueMessage.get(0);
+			return mes.phoneNumber;
+		}
+		return null;
+	}
+	
+	private String getMessageinProgress() {
+		if (myQueueMessage.size() > 0) {
+			POJOMessage mes = myQueueMessage.get(0);
+			return mes.message;
+		} 
+		return null;
 	}
 	
 	private void startReconizer() {
@@ -160,10 +196,11 @@ public class MyService extends Service implements RecognitionListener {
 	                Log.e("TAG", "DEFAULT " + match);
 	                if (match.equalsIgnoreCase("oui") || match.equalsIgnoreCase("ouais")) {
 	                	state = StateMessage.READ;
-	                	speakText(message + ". Voulez vous envoyer un message à l'envoyeur ?"); // display name  here ?
+	                	speakText(getMessageinProgress() + ". Voulez vous envoyer un message à l'envoyeur ?"); // display name  here ?
 	                	break;
 	                } else if (match.equalsIgnoreCase("non")) {
 	                	state = StateMessage.NOTHING;
+	                	deleteProgressMessage();
 	                	speakText("Va te faire foutre connard");
 	                	break;
 	                }
@@ -175,15 +212,13 @@ public class MyService extends Service implements RecognitionListener {
 	                	break;
 	                } else if (match.equalsIgnoreCase("non")) {
 	                	state = StateMessage.NOTHING;
+	                	deleteProgressMessage();
 	                	speakText("Va te faire foutre connard");
 	                	break;
 	                }
             	} else if (state == StateMessage.SEND) {
             		Log.e("TAG", "SEND " + match);
-            		state = StateMessage.NOTHING;
             		sendSMSMessage(match);
-            		
-            		
             	}
             }
             
@@ -205,6 +240,7 @@ public class MyService extends Service implements RecognitionListener {
         Log.e("TAG",
                 "Error listening for speech: " + error);
         //recognizer.stopListening();
+        
     }
 
     @Override
@@ -249,7 +285,6 @@ public class MyService extends Service implements RecognitionListener {
         	myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, UTTERANCE_MESSAGE_SMS_RECEIVED);
         } else if (state == StateMessage.READ) {
         	myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, UTTERANCE_MESSAGE_SMS_TAKEN);
-        	this.message = null;
         } else if (state == StateMessage.SEND) {
         	myHashAlarm.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, UTTERANCE_MESSAGE_SMS_SEND);
         }else if (state == StateMessage.SEND) {
@@ -293,8 +328,9 @@ public class MyService extends Service implements RecognitionListener {
 						
 						@Override
 						public void run() {
-							release();
-							stopSelf();
+							deleteProgressMessage();
+							state = StateMessage.NOTHING;
+							newMessageInQueue();
 						}
 					});
 				}
@@ -303,16 +339,30 @@ public class MyService extends Service implements RecognitionListener {
 		Log.e("TAG", "speak Text res" + res);
 	}
 	
+	private void newMessageInQueue() {
+		if (myQueueMessage.size() > 0) {
+			if (state == StateMessage.NOTHING) {
+				state = StateMessage.DEFAULT;
+				speakText(getString(R.string.info_name, getNameinProgress()));
+			}
+		} else {
+			release();
+			stopSelf();
+		}
+	}
+	
 	protected void sendSMSMessage(String message) {
 
 	       try {
 	         SmsManager smsManager = SmsManager.getDefault();
-	         smsManager.sendTextMessage(phoneNUmber, null, message, null, null);
+	         smsManager.sendTextMessage(getPhoneNumberinProgress(), null, message, null, null);
 	         speakText(message + ". Message envoyé");
 	      } catch (Exception e) {
 	         speakText("Message non envoyé");
 	      }
 	}
+	
+	
 	private void release() {
 		if (recognizer != null) {
 			recognizer.stopListening();

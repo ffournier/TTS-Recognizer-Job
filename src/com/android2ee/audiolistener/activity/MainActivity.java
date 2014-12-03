@@ -1,18 +1,15 @@
 package com.android2ee.audiolistener.activity;
 
-import com.android2ee.audiolistener.R;
-import com.android2ee.audiolistener.R.id;
-import com.android2ee.audiolistener.R.layout;
-import com.android2ee.audiolistener.R.menu;
-import com.android2ee.audiolistener.bluetooth.BluetoothHelper;
-import com.android2ee.audiolistener.broadcast.MyBroadcast;
-
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.android2ee.audiolistener.R;
+import com.android2ee.audiolistener.bluetooth.BluetoothHelper;
+import com.android2ee.audiolistener.broadcast.MyBroadcast;
 
 public class MainActivity extends ActionBarActivity {
 	
