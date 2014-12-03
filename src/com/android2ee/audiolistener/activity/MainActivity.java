@@ -1,4 +1,11 @@
-package com.android2ee.audiolistener;
+package com.android2ee.audiolistener.activity;
+
+import com.android2ee.audiolistener.R;
+import com.android2ee.audiolistener.R.id;
+import com.android2ee.audiolistener.R.layout;
+import com.android2ee.audiolistener.R.menu;
+import com.android2ee.audiolistener.bluetooth.BluetoothHelper;
+import com.android2ee.audiolistener.broadcast.MyBroadcast;
 
 import android.content.Intent;
 import android.content.IntentFilter;

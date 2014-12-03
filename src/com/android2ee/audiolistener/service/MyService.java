@@ -1,8 +1,11 @@
-package com.android2ee.audiolistener;
+package com.android2ee.audiolistener.service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
+
+import com.android2ee.audiolistener.R;
+import com.android2ee.audiolistener.R.string;
 
 import android.app.Service;
 import android.content.ContentResolver;
@@ -126,11 +129,15 @@ public class MyService extends Service implements RecognitionListener {
 	public int onStartCommand(Intent intent, int flags, int startId) 
 	{
 		int result =  super.onStartCommand(intent, flags, startId);
-		this.message = intent.getStringExtra(KEY_MESSAGE);
-		this.phoneNUmber = intent.getStringExtra(KEY_NAME);
-		this.name = getContact(phoneNUmber);
-		state = StateMessage.DEFAULT;
-		speakText(getString(R.string.info_name, name));
+		if (intent != null) {
+			this.message = intent.getStringExtra(KEY_MESSAGE);
+			this.phoneNUmber = intent.getStringExtra(KEY_NAME);
+			this.name = getContact(phoneNUmber);
+			state = StateMessage.DEFAULT;
+			speakText(getString(R.string.info_name, name));
+		} else {
+			Log.w("TAG", "No Intent");
+		}
 		return result;
 	}
 	
