@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android">
+        
+     <PreferenceCategory
+            android:title="@string/pref_category_sms">
+		<ListPreference
+                android:key="sms_preference"
+                android:title="@string/title_sms_preference"
+                android:summary="@string/summary_sms_preference"
+                android:entries="@array/entries_sms_preference"
+                android:entryValues="@array/entryvalues_sms_preference"
+                android:dialogTitle="@string/dialog_sms_preference"
+                android:defaultValue="5" />
+	</PreferenceCategory>
+	<PreferenceCategory
+            android:title="@string/pref_category_mic_bt">
+		
+	    	<SwitchPreference
+                android:key="mic_bt_preference"
+                android:title="@string/title_mic_bt_preference"
+                android:summary="@string/summary_mic_bt_preference" />
+	</PreferenceCategory>
+</PreferenceScreen>

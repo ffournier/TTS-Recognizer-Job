@@ -40,8 +40,9 @@ public abstract class BluetoothHeadSetUtils
     private boolean mIsStarting;
     private boolean mIsOnHeadsetSco;
     private boolean mIsStarted;
-
+    
     private static final String TAG = "BluetoothHeadSetUtils"; //$NON-NLS-1$
+    
 
     /**
      * Constructor
@@ -53,6 +54,16 @@ public abstract class BluetoothHeadSetUtils
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
     }
+    
+    
+    public abstract void onHeadsetDisconnected();
+
+	public abstract void onHeadsetConnected();
+	
+	public abstract void onScoAudioDisconnected();
+
+	public abstract void onScoAudioConnected();
+    
 
     /**
      * Call this to start BluetoothHeadSetUtils functionalities.
@@ -108,14 +119,7 @@ public abstract class BluetoothHeadSetUtils
         return mIsOnHeadsetSco;
     }
 
-    public abstract void onHeadsetDisconnected();
-
-    public abstract void onHeadsetConnected();
-
-    public abstract void onScoAudioDisconnected();
-
-    public abstract void onScoAudioConnected();
-
+   
     /**
      * Register for bluetooth headset connection states and Sco audio states.
      * Try to connect to bluetooth headset audio by calling startBluetoothSco(). 
@@ -327,7 +331,7 @@ public abstract class BluetoothHeadSetUtils
 
                     // override this if you want to do other thing when Sco audio is connected.
                     onScoAudioConnected();
-
+                
                     Log.d(TAG, "Sco connected"); //$NON-NLS-1$
                 }
                 else if (state == AudioManager.SCO_AUDIO_STATE_DISCONNECTED)
@@ -423,7 +427,7 @@ public abstract class BluetoothHeadSetUtils
                 mConnectedHeadset = devices.get(0);
 
                 onHeadsetConnected();
-
+                
                 // Should not need count down timer, but just in case.
                 // See comment below in mHeadsetBroadcastReceiver onReceive()
                 mIsCountDownOn = true;
@@ -475,7 +479,7 @@ public abstract class BluetoothHeadSetUtils
 
                     // override this if you want to do other thing when the device is connected.
                     onHeadsetConnected();
-
+                    
                     Log.d(TAG, "Start count down"); //$NON-NLS-1$
                 }
                 else if (state == BluetoothHeadset.STATE_DISCONNECTED)
@@ -491,7 +495,7 @@ public abstract class BluetoothHeadSetUtils
 
                     // override this if you want to do other thing when the device is disconnected.
                     onHeadsetDisconnected();
-
+                    
                     Log.d(TAG, "Headset disconnected"); //$NON-NLS-1$
                 }
             }
@@ -524,7 +528,7 @@ public abstract class BluetoothHeadSetUtils
 
                     // override this if you want to do other thing when headset audio is disconnected.
                     onScoAudioDisconnected();
-
+                    
                     Log.d(TAG, "Headset audio disconnected"); //$NON-NLS-1$
                 }
             }   

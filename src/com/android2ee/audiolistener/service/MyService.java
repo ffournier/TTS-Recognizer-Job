@@ -7,6 +7,7 @@ import java.util.Locale;
 import android.app.Service;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Binder;
@@ -23,6 +24,11 @@ import android.telephony.SmsManager;
 import android.util.Log;
 
 import com.android2ee.audiolistener.R;
+import com.android2ee.audiolistener.activity.MainActivity.MyPreferences;
+import com.android2ee.audiolistener.activity.MainActivity.ValueList;
+import com.android2ee.audiolistener.bluetooth.BlueToothState;
+import com.android2ee.audiolistener.bluetooth.BluetoothHelper;
+import com.android2ee.audiolistener.broadcast.MyBroadcast;
 
 public class MyService extends Service implements RecognitionListener {
 	
@@ -44,6 +50,9 @@ public class MyService extends Service implements RecognitionListener {
 	
 	private ArrayList<POJOMessage> myQueueMessage = new ArrayList<POJOMessage>();
 	
+	MyBroadcast broadcast;
+	BluetoothHelper helper;
+	
 	private enum StateMessage {
 		DEFAULT,
 		READ,
@@ -51,25 +60,27 @@ public class MyService extends Service implements RecognitionListener {
 		NOTHING
 	}
 	
-	private LocalBinder mBinder;
+	private LocalBinder mBinder = new LocalBinder();
 
 	public class LocalBinder extends Binder {
 		
 		public MyService getService() {
 			return MyService.this;
 		}
-		
 	}
 	
 	@Override
 	public IBinder onBind(Intent intent) {
 		return mBinder;
 	}
-
+	
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		state = StateMessage.NOTHING;
+		
+		
+		treatSMSType(MyPreferences.getSMSType(this));
 		
 		initTextToSpeech();
 		initRecognizer();
@@ -93,6 +104,7 @@ public class MyService extends Service implements RecognitionListener {
 	      				@Override
 	      				public void onInit(int status) {
 	      					if(status != TextToSpeech.ERROR){
+	      						// TODO maybe need to find te good locale ...
 	             	            ttobj.setLanguage(Locale.FRENCH);
 	             	            if (isInProgress()) {
 	             	            	speakText(getString(R.string.info_name, getNameinProgress()));
@@ -127,12 +139,14 @@ public class MyService extends Service implements RecognitionListener {
 	{
 		int result =  super.onStartCommand(intent, flags, startId);
 		if (intent != null) {
-			String message = intent.getStringExtra(KEY_MESSAGE);
-			String phoneNumber = intent.getStringExtra(KEY_NAME);
-			String name = getContact(phoneNumber);
-			
-			myQueueMessage.add(new POJOMessage(message, phoneNumber, name));
-			newMessageInQueue();
+			if (intent.getExtras() != null && intent.getExtras().containsKey(KEY_MESSAGE)) {
+				String message = intent.getStringExtra(KEY_MESSAGE);
+				String phoneNumber = intent.getStringExtra(KEY_NAME);
+				String name = getContact(phoneNumber);
+				
+				treatReceivedSMS(MyPreferences.getSMSType(this), new POJOMessage(message, phoneNumber, name));
+				
+			}
 		} else {
 			Log.w("TAG", "No Intent");
 		}
@@ -151,14 +165,15 @@ public class MyService extends Service implements RecognitionListener {
 	}
 	
 	private String getNameinProgress() {
+		String result = "";
 		if (myQueueMessage.size() > 0) {
 			POJOMessage mes = myQueueMessage.get(0);
-			String result = mes.name;
+			result = mes.name;
 			if (result == null || result.length() == 0) {
 				result = mes.phoneNumber;
 			}
 		}
-		return null;
+		return result;
 	}
 	
 	private String getPhoneNumberinProgress() {
@@ -179,7 +194,11 @@ public class MyService extends Service implements RecognitionListener {
 	
 	private void startReconizer() {
 		Log.e("TAG", "startListenning");
-		recognizer.startListening(intentRecognizer);
+		if (MyPreferences.isMicBT(this)) {
+			startBtMic();
+		} else {
+			recognizer.startListening(intentRecognizer);
+		}
 	}
 	
 	@Override
@@ -196,10 +215,12 @@ public class MyService extends Service implements RecognitionListener {
 	                Log.e("TAG", "DEFAULT " + match);
 	                if (match.equalsIgnoreCase("oui") || match.equalsIgnoreCase("ouais")) {
 	                	state = StateMessage.READ;
+	                	stopBtMic();
 	                	speakText(getMessageinProgress() + ". Voulez vous envoyer un message à l'envoyeur ?"); // display name  here ?
 	                	break;
 	                } else if (match.equalsIgnoreCase("non")) {
 	                	state = StateMessage.NOTHING;
+	                	stopBtMic();
 	                	deleteProgressMessage();
 	                	speakText("Va te faire foutre connard");
 	                	break;
@@ -208,16 +229,19 @@ public class MyService extends Service implements RecognitionListener {
             		Log.e("TAG", "READ " + match);
             		if (match.equalsIgnoreCase("oui") || match.equalsIgnoreCase("ouais")) {
             			state = StateMessage.SEND;
+            			stopBtMic();
 	                	speakText("Annoncez le message ?");
 	                	break;
 	                } else if (match.equalsIgnoreCase("non")) {
 	                	state = StateMessage.NOTHING;
+	                	stopBtMic();
 	                	deleteProgressMessage();
 	                	speakText("Va te faire foutre connard");
 	                	break;
 	                }
             	} else if (state == StateMessage.SEND) {
             		Log.e("TAG", "SEND " + match);
+            		stopBtMic();
             		sendSMSMessage(match);
             	}
             }
@@ -240,6 +264,12 @@ public class MyService extends Service implements RecognitionListener {
         Log.e("TAG",
                 "Error listening for speech: " + error);
         //recognizer.stopListening();
+        // time out
+        if (error == 7) {
+        	state = StateMessage.NOTHING;
+        	deleteProgressMessage();
+        	stopBtMic();
+        }
         
     }
 
@@ -347,7 +377,7 @@ public class MyService extends Service implements RecognitionListener {
 			}
 		} else {
 			release();
-			stopSelf();
+			//stopSelf();
 		}
 	}
 	
@@ -377,11 +407,82 @@ public class MyService extends Service implements RecognitionListener {
 		}
 	}
 	
+	public void treatReceivedSMS(ValueList value, POJOMessage message) {
+		if (value.getValue() <= ValueList.HEADSET_BT.getValue()) {
+			myQueueMessage.add(message);
+			newMessageInQueue();
+		} else {
+			// nothing
+		}
+	}
+	
+	public void treatSMSType(ValueList value) {
+		if (value.getValue() <= ValueList.HEADSET.getValue()) {
+			registerHeadSet();
+		} else {
+			unRegisterHeadSet();
+		}
+	}
+	
+	private void startBtMic() {
+		if (helper == null) {
+			helper = new BluetoothHelper(this);
+			
+		}
+		helper.setOnBlueToothState(new BlueToothState() {
+			
+			@Override
+			public void onReady() {
+				Log.e("TAG", "onReady");
+				recognizer.startListening(intentRecognizer);
+				
+			}
+			
+		});
+		helper.start();
+	}
+	
+	/*public void testMic(boolean value) {
+		if (value) {
+			Log.e("TAG", "startBtMic");
+			startBtMic();
+		} else {
+			Log.e("TAG", "stopBtMic");
+			stopBtMic();
+		}
+	}*/
+	
+	private void stopBtMic() {
+		if (helper != null) {
+			helper.stop();
+			helper.setOnBlueToothState(null);
+			helper = null;
+		}
+	}
+	
+	private void registerHeadSet() {
+		if (broadcast == null) {
+			broadcast = new MyBroadcast();
+			registerReceiver(broadcast, new IntentFilter(Intent.ACTION_HEADSET_PLUG));
+		}
+	}
+	
+	private void unRegisterHeadSet() {
+		if (broadcast != null) {
+			unregisterReceiver(broadcast);
+			broadcast = null;
+		}
+	}
+	
 	@Override
 	public void onDestroy() {
 		release();
+		stopBtMic();
+		unRegisterHeadSet();
 		super.onDestroy();
 	}
+
+
 	
 	
 
