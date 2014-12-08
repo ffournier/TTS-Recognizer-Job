@@ -14,5 +14,20 @@ public class POJOMessage {
 		this.name = name;
 	}
 	
+	public String getMessage() {
+		return message;
+	}
+	
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+	
+	public String getValidateName() {
+		String result = name;
+		if (result == null || result.length() == 0) {
+			result = phoneNumber;
+		}
+		return result;
+	}
 	
 }

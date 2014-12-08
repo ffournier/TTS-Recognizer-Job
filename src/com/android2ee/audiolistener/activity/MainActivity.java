@@ -17,9 +17,6 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 
 import com.android2ee.audiolistener.R;
 import com.android2ee.audiolistener.service.MyService;
@@ -32,7 +29,7 @@ public class MainActivity extends PreferenceActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		Button button = (Button) findViewById(R.id.button);
+		/*Button button = (Button) findViewById(R.id.button);
 		button.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -53,7 +50,7 @@ public class MainActivity extends PreferenceActivity {
 				Intent service = new Intent(MainActivity.this, MyService.class);
 				MainActivity.this.stopService(service); 
 			}
-		});
+		});*/
 		
 		
 	}
