@@ -1,5 +1,6 @@
 package com.android2ee.audiolistener.broadcast;
 
+import com.android2ee.audiolistener.MyApplication;
 import com.android2ee.audiolistener.service.MyService;
 
 import android.bluetooth.BluetoothHeadset;
@@ -26,9 +27,26 @@ public class MyBroadcast extends BroadcastReceiver {
 			Log.i("TAG", "state : " + extras.getInt("state"));
 			Log.i("TAG", "name : " + extras.getString("name"));
 			Log.i("TAG", "microphone : " + extras.getInt("microphone"));
+			
+			MyApplication app = MyApplication.getInstance();
+			switch (extras.getInt("state")) {
+            case 0:
+                app.setHeadSet(false);
+                break;
+            case 1:
+            	app.setHeadSet(true);
+                break;
+            }
+			
 		} else if (intent.getAction().equalsIgnoreCase(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)) {
 			Log.i("TAG", "action : " + intent.getAction());
-			
+			MyApplication app = MyApplication.getInstance();
+			int state = intent.getIntExtra(BluetoothHeadset.EXTRA_STATE, BluetoothHeadset.STATE_DISCONNECTED);
+            if (state == BluetoothHeadset.STATE_AUDIO_CONNECTED) {
+            	app.setHeadSetBT(true);
+            } else if (state == BluetoothHeadset.STATE_AUDIO_DISCONNECTED){
+            	app.setHeadSet(false);
+            }
 		} else if (intent.getAction().equalsIgnoreCase(BluetoothHeadset.ACTION_VENDOR_SPECIFIC_HEADSET_EVENT)) {
 			Log.i("TAG", "action : " + intent.getAction());
 		} else if (intent.getAction().equalsIgnoreCase(Telephony.Sms.Intents.SMS_RECEIVED_ACTION)) {

@@ -23,6 +23,7 @@ import android.speech.tts.TextToSpeech.OnUtteranceCompletedListener;
 import android.telephony.SmsManager;
 import android.util.Log;
 
+import com.android2ee.audiolistener.MyApplication;
 import com.android2ee.audiolistener.R;
 import com.android2ee.audiolistener.activity.MainActivity.MyPreferences;
 import com.android2ee.audiolistener.activity.MainActivity.ValueList;
@@ -408,10 +409,21 @@ public class MyService extends Service implements RecognitionListener {
 	}
 	
 	public void treatReceivedSMS(ValueList value, POJOMessage message) {
-		if (value.getValue() <= ValueList.HEADSET_BT.getValue()) {
+		MyApplication app = MyApplication.getInstance();
+		if (value.getValue() == ValueList.NORMAL.getValue()) {
 			myQueueMessage.add(message);
 			newMessageInQueue();
-		} else {
+		} else if (value.getValue() == ValueList.HEADSET.getValue()) {
+			if (app.getHeadSet()) {
+				myQueueMessage.add(message);
+				newMessageInQueue();
+			}
+		} else if (value.getValue() == ValueList.HEADSET_BT.getValue()) {
+			if (app.getHeadSetBT()) {
+				myQueueMessage.add(message);
+				newMessageInQueue();
+			}
+		} else if (value.getValue() == ValueList.NONE.getValue()) {
 			// nothing
 		}
 	}
