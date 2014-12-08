@@ -11,7 +11,7 @@
                 android:entries="@array/entries_sms_preference"
                 android:entryValues="@array/entryvalues_sms_preference"
                 android:dialogTitle="@string/dialog_sms_preference"
-                android:defaultValue="5" />
+                android:defaultValue="4" />
 	</PreferenceCategory>
 	<PreferenceCategory
             android:title="@string/pref_category_mic_bt">
