@@ -1,4 +1,4 @@
-package com.android2ee.audiolistener.service.mysms;
+package com.android2ee.audiolistener.mysms.service;
 
 import com.android2ee.audiolistener.service.POJOObject;
 

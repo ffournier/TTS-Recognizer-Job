@@ -1,4 +1,4 @@
-package com.android2ee.audiolistener.service.mysms;
+package com.android2ee.audiolistener.mysms.service;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
@@ -9,10 +9,10 @@ import android.provider.ContactsContract.PhoneLookup;
 import com.android2ee.audiolistener.R;
 import com.android2ee.audiolistener.job.JobAnswer;
 import com.android2ee.audiolistener.job.Jobs;
-import com.android2ee.audiolistener.job.list.JobReadSMS;
-import com.android2ee.audiolistener.job.list.JobReceiveSMS;
-import com.android2ee.audiolistener.job.list.JobSendSMS;
-import com.android2ee.audiolistener.job.list.JobSentSMS;
+import com.android2ee.audiolistener.mysms.job.JobReadSMS;
+import com.android2ee.audiolistener.mysms.job.JobReceiveSMS;
+import com.android2ee.audiolistener.mysms.job.JobSendSMS;
+import com.android2ee.audiolistener.mysms.job.JobSentSMS;
 import com.android2ee.audiolistener.service.JobService;
 import com.android2ee.audiolistener.service.POJOObject;
 

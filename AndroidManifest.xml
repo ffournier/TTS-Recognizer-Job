@@ -35,7 +35,7 @@
             </intent-filter>
         </activity>
         
-        <service android:name="com.android2ee.audiolistener.service.mysms.MyService"/>
+        <service android:name="com.android2ee.audiolistener.mysms.service.MyService"/>
         
         <receiver android:name="com.android2ee.audiolistener.broadcast.MyBroadcast" 
             >

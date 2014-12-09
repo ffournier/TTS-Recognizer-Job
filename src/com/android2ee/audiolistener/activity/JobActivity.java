@@ -22,9 +22,9 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 
 import com.android2ee.audiolistener.R;
+import com.android2ee.audiolistener.mysms.service.MyService;
 import com.android2ee.audiolistener.service.JobService;
 import com.android2ee.audiolistener.service.JobService.LocalBinder;
-import com.android2ee.audiolistener.service.mysms.MyService;
 
 public class JobActivity extends PreferenceActivity {
 	
