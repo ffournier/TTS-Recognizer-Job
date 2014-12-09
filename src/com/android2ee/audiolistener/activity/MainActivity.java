@@ -19,8 +19,9 @@ import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
 
 import com.android2ee.audiolistener.R;
+import com.android2ee.audiolistener.service.JobService;
+import com.android2ee.audiolistener.service.JobService.LocalBinder;
 import com.android2ee.audiolistener.service.MyService;
-import com.android2ee.audiolistener.service.MyService.LocalBinder;
 
 public class MainActivity extends PreferenceActivity {
 	
@@ -64,7 +65,7 @@ public class MainActivity extends PreferenceActivity {
 		
 		private ListPreference listPreference;
 		private SwitchPreference switchPreference;
-		protected MyService mService;
+		protected JobService mService;
 		
 		private ServiceConnection mConnection = new ServiceConnection() {
 			
@@ -76,7 +77,7 @@ public class MainActivity extends PreferenceActivity {
 			@Override
 			public void onServiceConnected(ComponentName name, IBinder service) {
 				LocalBinder binder = (LocalBinder) service;
-	            mService = binder.getService();
+	            mService = (JobService)binder.getService();
 			}
 		};
 
@@ -118,7 +119,7 @@ public class MainActivity extends PreferenceActivity {
 			if (preference.getKey().equals(listPreference.getKey())) {
 				// change headset
 				if (mService != null) {
-					mService.treatSMSType(ValueList.fromString((String)newValue));
+					mService.treatByType(ValueList.fromString((String)newValue));
 					if (ValueList.fromString((String)newValue) != ValueList.HEADSET_BT) {
 						switchPreference.setChecked(false);
 						switchPreference.setEnabled(false);
@@ -135,7 +136,7 @@ public class MainActivity extends PreferenceActivity {
 			return PreferenceManager.getDefaultSharedPreferences(context).getBoolean("mic_bt_preference", false);
 		}
 		
-		public static ValueList getSMSType(Context context) {
+		public static ValueList getType(Context context) {
 			return ValueList.fromString(PreferenceManager.getDefaultSharedPreferences(context)
 										.getString("sms_preference", ValueList.NONE.getValueString()));
 		}
