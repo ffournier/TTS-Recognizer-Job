@@ -5,17 +5,16 @@ import java.util.ArrayList;
 import android.telephony.SmsManager;
 
 import com.android2ee.audiolistener.job.Job;
-import com.android2ee.audiolistener.job.JobRebounds;
 
-public class JobSendSMS extends JobRebounds {
+public class JobSendSMS extends Job {
 	
-	private static final String UTTERANCE_MESSAGE_SMS_SEND = "com.android2ee.audiolistener.message_send";
+	public static final String UTTERANCE_MESSAGE_SMS_SEND = "com.android2ee.audiolistener.message_send";
 	
 	String phoneNumber;
 	
-	public JobSendSMS(String phoneNumber, Job jobRebounds) {
+	public JobSendSMS(String phoneNumber) {
 		// message "Annoncez le message ?"
-		super(UTTERANCE_MESSAGE_SMS_SEND, "Annoncez le message ?",  true, jobRebounds);
+		super(UTTERANCE_MESSAGE_SMS_SEND, "Annoncez le message ?",  true);
 		this.phoneNumber = phoneNumber;
 	}
 	
@@ -34,16 +33,19 @@ public class JobSendSMS extends JobRebounds {
 	         SmsManager smsManager = SmsManager.getDefault();
 	         smsManager.sendTextMessage(phoneNumber, null, message, null, null);
 	         // Message envoyé
-	         updateJob(message + ". Message envoyé");
+	         updateJobSent(message + ". Message envoyé");
 	      } catch (Exception e) {
 	         // Message Non envoyé
-	    	 updateJob("Message non envoyé");
+	    	  updateJobSent("Message non envoyé");
 	      }
 	}
 	
-	private void updateJob(String message) {
-		if (jobRebounds != null) {
-			jobRebounds.setMessageTTS(message);
+	private void updateJobSent(String message) {
+		if (hasJob(JobSentSMS.UTTERANCE_MESSAGE_SMS_SENT)) {
+			Job job = getJob(JobSentSMS.UTTERANCE_MESSAGE_SMS_SENT);
+			if (job != null) {
+				job.setMessageTTS(message);
+			}
 		}
 	}
 

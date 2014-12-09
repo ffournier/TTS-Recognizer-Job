@@ -184,13 +184,12 @@ public class JobManager implements RecognitionListener {
 		 ArrayList<String> voiceResults = results
 	                .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
 		int result = job.onResult(voiceResults);
-		if (result == Job.POSITIVE_ANSWER) {
+		job = jobs.getNextSonJob(job, result);
+		if (job != null) {
 			job = jobs.getNextJob(job);
-			if (job != null) {
-				startJob(job);
-			} else {
-				endJobs(Jobs.OK);
-			}
+		} 
+		if (job != null) {
+			startJob(job);
 		} else {
 			endJobs(Jobs.NOK);
 		}

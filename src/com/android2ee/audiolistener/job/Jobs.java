@@ -44,9 +44,18 @@ public class Jobs {
 		}
 	}
 	
+	public Job getNextSonJob(Job currentJob, int result) {
+		if (currentJob != null) {
+			if (currentJob.hasKey(result)){
+				return currentJob.getJobByKey(result);
+			}
+		}
+		return null;
+	}
+	
 	public Job getNextJob(Job currentJob) {
 		if (jobs != null && jobs.size() > 0) {
-			Job job = jobs.get(0);
+			/*Job job = jobs.get(0);
 			if (job instanceof JobRebounds) {
 				JobRebounds jobRebounds = (JobRebounds) job;
 				// we test if the next job is the current Job
@@ -54,7 +63,7 @@ public class Jobs {
 				if (job != null) {
 					return job;	
 				}
-			}
+			}*/
 			
 			jobs.remove(0);
 			if (jobs.size() > 0) {

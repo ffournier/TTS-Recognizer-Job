@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract.PhoneLookup;
 
 import com.android2ee.audiolistener.R;
-import com.android2ee.audiolistener.activity.MainActivity.MyPreferences;
+import com.android2ee.audiolistener.job.Job;
 import com.android2ee.audiolistener.job.Jobs;
 import com.android2ee.audiolistener.job.list.JobReadSMS;
 import com.android2ee.audiolistener.job.list.JobReceiveSMS;
@@ -54,10 +54,14 @@ public class MyService extends JobService {
 		if (POJOMessage.isSMSType(object)) {
 			POJOMessage message = (POJOMessage) object;
 			jobs = new Jobs();
-			jobs.addJob(new JobReceiveSMS(getString(R.string.info_name, message.getValidateName())));
-			jobs.addJob(new JobReadSMS(message.getMessage() + ". Voulez vous envoyer un message à l'envoyeur ?"));
+			JobReceiveSMS jobReceiveSMS = new JobReceiveSMS(getString(R.string.info_name, message.getValidateName()));
+			JobReadSMS jobReadSMS = new JobReadSMS(message.getMessage() + ". Voulez vous envoyer un message à l'envoyeur ?");
+			JobSendSMS jobSendSMS = new JobSendSMS(message.getPhoneNumber());
 			JobSentSMS jobSentSMS = new JobSentSMS();
-			jobs.addJob(new JobSendSMS(message.getPhoneNumber(), jobSentSMS));
+			jobReadSMS.addSonJob(Job.POSITIVE_ANSWER, jobSentSMS);
+			jobReadSMS.addSonJob(Job.POSITIVE_ANSWER, jobSendSMS);
+			jobReceiveSMS.addSonJob(Job.POSITIVE_ANSWER, jobReadSMS);
+			jobs.addJob(jobReceiveSMS);
 		}
 		return jobs;
 	}

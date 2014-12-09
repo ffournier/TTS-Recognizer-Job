@@ -6,7 +6,8 @@ import com.android2ee.audiolistener.job.Job;
 
 public class JobReadSMS extends Job {
 	
-	private static final String UTTERANCE_MESSAGE_SMS_TAKEN = "com.android2ee.audiolistener.message_taken";
+	public static final String UTTERANCE_MESSAGE_SMS_TAKEN = "com.android2ee.audiolistener.message_taken";
+	
 	public JobReadSMS(String message) {
 		// message  getMessageinProgress() + ". Voulez vous envoyer un message à l'envoyeur ?"
 		super(UTTERANCE_MESSAGE_SMS_TAKEN, message,  true);

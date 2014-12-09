@@ -6,7 +6,7 @@ import com.android2ee.audiolistener.job.Job;
 
 public class JobReceiveSMS extends Job {
 	
-	private static final String UTTERANCE_MESSAGE_SMS_RECEIVED = "com.android2ee.audiolistener.message_received";
+	public static final String UTTERANCE_MESSAGE_SMS_RECEIVED = "com.android2ee.audiolistener.message_received";
 
 	public JobReceiveSMS(String message) {
 		// message getString(R.string.info_name, getNameinProgress()
