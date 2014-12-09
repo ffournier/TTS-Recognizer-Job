@@ -3,7 +3,7 @@ package com.android2ee.audiolistener.job;
 import android.content.Context;
 import android.util.Log;
 
-import com.android2ee.audiolistener.activity.MainActivity.MyPreferences;
+import com.android2ee.audiolistener.activity.JobActivity.MyPreferences;
 import com.android2ee.audiolistener.bluetooth.BlueToothState;
 import com.android2ee.audiolistener.bluetooth.BluetoothHelper;
 

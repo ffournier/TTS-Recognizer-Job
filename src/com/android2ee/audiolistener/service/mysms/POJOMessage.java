@@ -1,4 +1,6 @@
-package com.android2ee.audiolistener.service;
+package com.android2ee.audiolistener.service.mysms;
+
+import com.android2ee.audiolistener.service.POJOObject;
 
 public class POJOMessage extends POJOObject {
 	

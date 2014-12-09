@@ -1,7 +1,7 @@
 package com.android2ee.audiolistener.broadcast;
 
 import com.android2ee.audiolistener.MyApplication;
-import com.android2ee.audiolistener.service.MyService;
+import com.android2ee.audiolistener.service.mysms.MyService;
 
 import android.bluetooth.BluetoothHeadset;
 import android.content.BroadcastReceiver;

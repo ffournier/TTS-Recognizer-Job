@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.android2ee.audiolistener.service.MyService;
+import com.android2ee.audiolistener.service.mysms.MyService;
 
 public class BootCompletedIntentReceiver extends BroadcastReceiver {
 

@@ -11,8 +11,8 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.android2ee.audiolistener.MyApplication;
-import com.android2ee.audiolistener.activity.MainActivity.MyPreferences;
-import com.android2ee.audiolistener.activity.MainActivity.ValueList;
+import com.android2ee.audiolistener.activity.JobActivity.MyPreferences;
+import com.android2ee.audiolistener.activity.JobActivity.ValueList;
 import com.android2ee.audiolistener.broadcast.MyBroadcast;
 import com.android2ee.audiolistener.job.JobInterface;
 import com.android2ee.audiolistener.job.JobManagerBT;

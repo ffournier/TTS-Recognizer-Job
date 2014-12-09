@@ -121,7 +121,7 @@ public class JobManager implements RecognitionListener {
 								if (job.hasRecognizer()) {
 									startReconizer();
 								} else {
-									job = jobs.getNextJob(job);
+									job = jobs.getNextJob(job, JobAnswer.NO_VOICE_RECOGNIZE);
 									if (job != null) {
 										startJob(job);
 									} else {
@@ -183,11 +183,8 @@ public class JobManager implements RecognitionListener {
 	public void onResults(Bundle results) {
 		 ArrayList<String> voiceResults = results
 	                .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-		int result = job.onResult(voiceResults);
-		job = jobs.getNextSonJob(job, result);
-		if (job != null) {
-			job = jobs.getNextJob(job);
-		} 
+		JobAnswer result = job.onResult(voiceResults);
+		job = jobs.getNextJob(job, result);
 		if (job != null) {
 			startJob(job);
 		} else {

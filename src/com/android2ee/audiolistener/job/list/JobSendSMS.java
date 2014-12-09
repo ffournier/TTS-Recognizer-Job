@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.telephony.SmsManager;
 
 import com.android2ee.audiolistener.job.Job;
+import com.android2ee.audiolistener.job.JobAnswer;
 
 public class JobSendSMS extends Job {
 	
@@ -19,13 +20,13 @@ public class JobSendSMS extends Job {
 	}
 	
 	@Override
-	public int onResult(ArrayList<String> voiceResults) {
-		if (voiceResults!=null && voiceResults.size() > 0) {
+	public JobAnswer onResult(ArrayList<String> voiceResults) {
+		JobAnswer answer = super.onResult(voiceResults);
+		if (answer !=  JobAnswer.EMPTY) {
 			sendSMSMessage(voiceResults.get(0));
-			return Job.POSITIVE_ANSWER;
-		} else {
-			return Job.NEGATIVE_ANSWER;
+			return answer;
 		}
+		return answer;
 	}
 	
 	protected void sendSMSMessage(String message) {

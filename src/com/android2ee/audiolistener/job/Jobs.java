@@ -18,14 +18,19 @@ public class Jobs {
 		jobs.remove(job);
 	}
 	
-	public void removeJob(String id) {
+	/*public void removeJob(String id) {
 		Job jobFound = findJob(id);
 		if (jobFound != null) {
 			removeJob(jobFound);
 		}
-	}
+	}*/
 	
-	public Job findJob(String id) {
+	/**
+	 * Find Job in First Step
+	 * @param id
+	 * @return
+	 */
+	/*public Job findJob(String id) {
 		Job jobFound = null;
 		for (Job job : jobs) {
 			if (job.getId().equalsIgnoreCase(id)) {
@@ -34,7 +39,7 @@ public class Jobs {
 			}
 		}
 		return jobFound;
-	}
+	}*/
 	
 	public Job getFirstJob() {
 		if (jobs != null && jobs.size() > 0) {
@@ -44,7 +49,15 @@ public class Jobs {
 		}
 	}
 	
-	public Job getNextSonJob(Job currentJob, int result) {
+	public Job getNextJob(Job currentJob,JobAnswer result) {
+		Job job = getNextSonJob(currentJob, result);
+		if (job == null) {
+			job = getNextJob();
+		}
+		return job;
+	}
+	
+	private Job getNextSonJob(Job currentJob,JobAnswer result) {
 		if (currentJob != null) {
 			if (currentJob.hasKey(result)){
 				return currentJob.getJobByKey(result);
@@ -53,18 +66,8 @@ public class Jobs {
 		return null;
 	}
 	
-	public Job getNextJob(Job currentJob) {
+	private Job getNextJob() {
 		if (jobs != null && jobs.size() > 0) {
-			/*Job job = jobs.get(0);
-			if (job instanceof JobRebounds) {
-				JobRebounds jobRebounds = (JobRebounds) job;
-				// we test if the next job is the current Job
-				job = jobRebounds.getNextJob(currentJob);
-				if (job != null) {
-					return job;	
-				}
-			}*/
-			
 			jobs.remove(0);
 			if (jobs.size() > 0) {
 				return jobs.get(0);

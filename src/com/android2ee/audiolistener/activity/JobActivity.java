@@ -17,29 +17,32 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 
 import com.android2ee.audiolistener.R;
 import com.android2ee.audiolistener.service.JobService;
 import com.android2ee.audiolistener.service.JobService.LocalBinder;
-import com.android2ee.audiolistener.service.MyService;
+import com.android2ee.audiolistener.service.mysms.MyService;
 
-public class MainActivity extends PreferenceActivity {
+public class JobActivity extends PreferenceActivity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		/*Button button = (Button) findViewById(R.id.button);
+		/*utton button = (Button) findViewById(R.id.button);
 		button.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Intent service = new Intent(MainActivity.this, MyService.class);
+				Intent service = new Intent(JobActivity.this, MyService.class);
 				service.putExtra(MyService.KEY_MESSAGE, "mon message de test");
 				service.putExtra(MyService.KEY_NAME, "montel");
-				MainActivity.this.startService(service); 
+				JobActivity.this.startService(service); 
 			}
 		});
 		
@@ -48,8 +51,8 @@ public class MainActivity extends PreferenceActivity {
 			
 			@Override
 			public void onClick(View v) {
-				Intent service = new Intent(MainActivity.this, MyService.class);
-				MainActivity.this.stopService(service); 
+				Intent service = new Intent(JobActivity.this, MyService.class);
+				JobActivity.this.stopService(service); 
 			}
 		});*/
 		

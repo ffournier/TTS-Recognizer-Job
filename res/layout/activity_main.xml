@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.android2ee.audiolistener.activity.MainActivity" 
+    tools:context="com.android2ee.audiolistener.activity.JobActivity" 
      android:orientation="vertical">
     
     <!-- <LinearLayout android:layout_width="match_parent"
@@ -18,9 +18,9 @@
 	    	android:layout_height="wrap_content"
 	    	android:layout_weight="1"
 	    	android:text="Stop"/>
-    </LinearLayout> -->
+    </LinearLayout>-->
     <fragment
-	   android:name="com.android2ee.audiolistener.activity.MainActivity$MyPreferences"
+	   android:name="com.android2ee.audiolistener.activity.JobActivity$MyPreferences"
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
 	    android:id="@+id/preferences_fragment">

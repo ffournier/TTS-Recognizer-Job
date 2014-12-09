@@ -2,9 +2,10 @@ package com.android2ee.audiolistener.job;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 import android.speech.tts.TextToSpeech;
-import android.util.SparseArray;
 
 public abstract class Job {
 	
@@ -17,22 +18,14 @@ public abstract class Job {
 	static final int ERROR_MATCH_NOT_FOUND = 0;
 	static final int ERROR_RECOGNIZER = 1;
 	
+	HashMap<JobAnswer, Job> sonJob = new HashMap<JobAnswer, Job>();
 	
-	public static final int NOT_FOUND = 0;
-	public static final int POSITIVE_ANSWER = 1;
-	public static final int NEGATIVE_ANSWER = 2;
-	public static final int ALL = 3;
-	
-	SparseArray<Job> sonJob;
-	
-
 	public Job(String id, String messageTTS, boolean hasRecognizer) {
 		this.id = id;
 		this.matchesPositive = null;
 		this.matchesNegative = null;
 		this.messageTTS = messageTTS;
 		this.hasRecognizer = hasRecognizer;
-		sonJob = null;
 	}
 	
 	protected void setResults(ArrayList<String> resultsPositive, ArrayList<String> resultsNegative) {
@@ -61,28 +54,34 @@ public abstract class Job {
 		return map;
 	}
 	
-	public int onResult(ArrayList<String> voiceResults) {
-		int result = NOT_FOUND;
-		for (String match : voiceResults) {
-			// TODO maybe evolve search ...
-			if (matchesPositive != null && matchesPositive.contains(match)){
-				result = POSITIVE_ANSWER;
-				break;
-			}
-			if (matchesNegative != null && matchesNegative.contains(match)){
-				result = NEGATIVE_ANSWER;
-				break;
-			}
-		}	
+	public JobAnswer onResult(ArrayList<String> voiceResults) {
+		JobAnswer result = JobAnswer.NOT_FOUND;
+		
+		if (voiceResults != null && voiceResults.size() > 0) {
+			for (String match : voiceResults) {
+				// TODO maybe evolve search ...
+				if (matchesPositive != null && matchesPositive.contains(match)){
+					result = JobAnswer.POSITIVE_ANSWER;
+					break;
+				}
+				if (matchesNegative != null && matchesNegative.contains(match)){
+					result = JobAnswer.NEGATIVE_ANSWER;
+					break;
+				}
+			}	
+		} else {
+			result = JobAnswer.EMPTY;
+		}
+		
 		return result;
 	}
 	
 	
-	public boolean hasKey(int key) {
+	public boolean hasKey(JobAnswer key) {
 		return getJobByKey(key) != null;
 	}
 	
-	public boolean addSonJob(int key, Job job ) {
+	public boolean addSonJob(JobAnswer key, Job job ) {
 		if (sonJob != null && job != null) {
 			if (!hasKey(key)) {
 				sonJob.put(key, job);
@@ -92,7 +91,7 @@ public abstract class Job {
 		return false;
 	}
 	
-	public Job getJobByKey(int key) {
+	public Job getJobByKey(JobAnswer key) {
 		if (sonJob != null) {
 			return sonJob.get(key);
 		}
@@ -105,16 +104,15 @@ public abstract class Job {
 	
 	protected Job getJob(String id) {
 		if (sonJob != null) {
-			int key = 0;
 			Job obj;
-			for(int i = 0; i < sonJob.size(); i++) {
-			   key = sonJob.keyAt(i);
-			   // get the object by the key.
-			   obj = sonJob.get(key);
-			   if (obj.getId() != null && obj.getId().equalsIgnoreCase(id)) {
-				   return obj;
-			   }
-			}
+			Iterator<Entry<JobAnswer, Job>> it = sonJob.entrySet().iterator();
+		    while (it.hasNext()) {
+		        Entry<JobAnswer, Job> pairs = it.next();
+		        obj = (Job) pairs.getValue();
+		        if (obj != null && obj.getId() != null && obj.getId().equalsIgnoreCase(id)) {
+					return obj;
+				}
+		    }
 		}
 	    return null;
 	}
