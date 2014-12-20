@@ -15,6 +15,7 @@ import com.android2ee.ttsjob.activity.MyPreferences;
 import com.android2ee.ttsjob.activity.MyPreferences.ValueList;
 import com.android2ee.ttsjob.broadcast.TTSJobBroadcast;
 import com.android2ee.ttsjob.job.JobInterface;
+import com.android2ee.ttsjob.job.JobManager;
 import com.android2ee.ttsjob.job.JobManagerBT;
 import com.android2ee.ttsjob.job.Jobs;
 
@@ -28,7 +29,7 @@ public abstract class TTSJobService extends Service implements JobInterface {
 	private ArrayList<POJOObject> myQueueMessage = new ArrayList<POJOObject>();
 	
 	TTSJobBroadcast broadcast;
-	JobManagerBT jobManagerBT;
+	JobManager jobManager;
 	
 	StateMessage state;
 	
@@ -60,13 +61,18 @@ public abstract class TTSJobService extends Service implements JobInterface {
 		Log.e("TAG", "onCreate");
 		
 		treatByType(MyPreferences.getType(this));
-		jobManagerBT = new JobManagerBT(this);
+		if (isBluetooth()) {
+			jobManager = new JobManagerBT(this, isPreferenceLanguage(), getTimeAfterStop());
+		} else {
+			jobManager = new JobManager(this, isPreferenceLanguage(), getTimeAfterStop());
+		}
+		
 	}
 	
-	
-	
-	
+	protected abstract boolean isBluetooth();
 	protected abstract POJOObject getMetaData(Bundle bundle);
+	protected abstract Boolean isPreferenceLanguage();
+	protected abstract Long getTimeAfterStop();
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) 
@@ -101,7 +107,7 @@ public abstract class TTSJobService extends Service implements JobInterface {
 				
 				Jobs jobs = addJobs(myQueueMessage.get(0));
 				if (jobs != null) {
-					if (jobManagerBT.startJobs(jobs, this)) {
+					if (jobManager.startJobs(jobs, this)) {
 						state = StateMessage.IS_RUNNING;
 					}
 				}
@@ -113,7 +119,7 @@ public abstract class TTSJobService extends Service implements JobInterface {
 	}
 	
 	private void release() {
-		jobManagerBT.release();
+		jobManager.release();
 	}
 	
 	protected void treatPOJOObject(ValueList value, POJOObject object) {

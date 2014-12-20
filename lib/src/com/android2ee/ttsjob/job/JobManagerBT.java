@@ -15,6 +15,10 @@ public class JobManagerBT extends JobManager {
 		super(context);
 	}
 	
+	public JobManagerBT(Context context, Boolean pref, Long time) {
+		super(context, pref, time);
+	}
+
 	@Override
 	protected void startReconizer() {
 		Log.e("TAG", "startListenning");

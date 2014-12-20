@@ -21,6 +21,7 @@
 
     <application
         android:allowBackup="true"
+        android:name="com.android2ee.ttsjob.TTSJobApplication"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
@@ -36,7 +37,7 @@
         </receiver>
         
         <activity
-            android:name="com.android2ee.ttsjob.activity.TTSJobActivity"
+            android:name="com.example.audiolistener.MyActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -47,7 +48,7 @@
         
         <service android:name="com.example.audiolistener.MyService"></service>
         
-        <receiver android:name="com.example.ttsjob.broadcast.TTSJobBroadcast">
+        <receiver android:name="com.android2ee.ttsjob.broadcast.TTSJobBroadcast">
             <intent-filter>
 
                 <action android:name="android.bluetooth.headset.profile.action.CONNECTION_STATE_CHANGED" />

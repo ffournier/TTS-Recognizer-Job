@@ -12,12 +12,15 @@ import com.android2ee.ttsjob.job.JobAnswer;
 import com.android2ee.ttsjob.job.Jobs;
 import com.android2ee.ttsjob.service.POJOObject;
 import com.android2ee.ttsjob.service.TTSJobService;
+import com.example.audiolistener.job.JobEndSMS;
 import com.example.audiolistener.job.JobReadSMS;
 import com.example.audiolistener.job.JobReceiveSMS;
 import com.example.audiolistener.job.JobSendSMS;
 import com.example.audiolistener.job.JobSentSMS;
 
 public class MyService extends TTSJobService {
+	
+	private final static int MAX_RETRY = 2;
 	
 	private String getContact(String phoneNumber) {
 		Log.e("SmsReceiver", "getContact");
@@ -61,16 +64,33 @@ public class MyService extends TTSJobService {
 		if (POJOMessage.isSMSType(object)) {
 			POJOMessage message = (POJOMessage) object;
 			jobs = new Jobs();
-			JobReceiveSMS jobReceiveSMS = new JobReceiveSMS(getString(R.string.info_name, message.getValidateName()));
-			JobReadSMS jobReadSMS = new JobReadSMS(message.getMessage() + ". Voulez vous envoyer un message à " +  message.getValidateName() + " ?");
-			JobSendSMS jobSendSMS = new JobSendSMS(message.getPhoneNumber());
+			JobReceiveSMS jobReceiveSMS = new JobReceiveSMS(getString(R.string.info_name, message.getValidateName()), MAX_RETRY);
+			JobReadSMS jobReadSMS = new JobReadSMS(message.getMessage() + ". Voulez vous envoyer un message à " +  message.getValidateName() + " ?", MAX_RETRY);
+			JobSendSMS jobSendSMS = new JobSendSMS(message.getPhoneNumber(), MAX_RETRY);
 			JobSentSMS jobSentSMS = new JobSentSMS();
 			jobSendSMS.addSonJob(JobAnswer.NOT_FOUND, jobSentSMS);
 			jobReadSMS.addSonJob(JobAnswer.POSITIVE_ANSWER, jobSendSMS);
 			jobReceiveSMS.addSonJob(JobAnswer.POSITIVE_ANSWER, jobReadSMS);
 			jobs.addJob(jobReceiveSMS);
+			JobEndSMS jobEnd = new JobEndSMS();
+			jobs.addJob(jobEnd);
 		}
 		return jobs;
+	}
+
+	@Override
+	protected boolean isBluetooth() {
+		return true;
+	}
+
+	@Override
+	protected Boolean isPreferenceLanguage() {
+		return null;
+	}
+
+	@Override
+	protected Long getTimeAfterStop() {
+		return (long) (15 * 1000);
 	}
 
 }

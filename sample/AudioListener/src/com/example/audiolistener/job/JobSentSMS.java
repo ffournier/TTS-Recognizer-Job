@@ -11,8 +11,4 @@ public class JobSentSMS extends Job {
 		super(UTTERANCE_MESSAGE_SMS_SENT, null,  false);
 	}
 	
-	public void setMessage(String message) {
-		
-	}
-	
 }

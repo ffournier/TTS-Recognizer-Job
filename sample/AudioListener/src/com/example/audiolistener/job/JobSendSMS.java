@@ -19,6 +19,12 @@ public class JobSendSMS extends Job {
 		this.phoneNumber = phoneNumber;
 	}
 	
+	public JobSendSMS(String phoneNumber, int retry) {
+		// message "Annoncez le message ?"
+		super(UTTERANCE_MESSAGE_SMS_SEND, "Annoncez le message ?",  true, retry);
+		this.phoneNumber = phoneNumber;
+	}
+	
 	@Override
 	public JobAnswer onResult(ArrayList<String> voiceResults) {
 		JobAnswer answer = super.onResult(voiceResults);

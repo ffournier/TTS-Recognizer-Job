@@ -52,7 +52,12 @@ public class Jobs {
 	public Job getNextJob(Job currentJob,JobAnswer result) {
 		Job job = getNextSonJob(currentJob, result);
 		if (job == null) {
-			job = getNextJob();
+			if (currentJob != null && result == JobAnswer.EMPTY && 
+					currentJob.canRetry()) {
+				currentJob.addRetry();
+				return currentJob;
+			}
+			job = getNextJobInList();
 		}
 		return job;
 	}
@@ -66,7 +71,7 @@ public class Jobs {
 		return null;
 	}
 	
-	private Job getNextJob() {
+	public Job getNextJobInList() {
 		if (jobs != null && jobs.size() > 0) {
 			jobs.remove(0);
 			if (jobs.size() > 0) {

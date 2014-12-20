@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import android.speech.tts.TextToSpeech;
+import android.util.Log;
 
 public abstract class Job {
 	
@@ -14,6 +15,8 @@ public abstract class Job {
 	ArrayList<String> matchesNegative;
 	boolean hasRecognizer;
 	String messageTTS;
+	int retry;
+	int maxRetry;
 	
 	static final int ERROR_MATCH_NOT_FOUND = 0;
 	static final int ERROR_RECOGNIZER = 1;
@@ -26,6 +29,13 @@ public abstract class Job {
 		this.matchesNegative = null;
 		this.messageTTS = messageTTS;
 		this.hasRecognizer = hasRecognizer;
+		this.maxRetry = 0;
+		this.retry = 0;
+	}
+	
+	public Job(String id, String messageTTS, boolean hasRecognizer, int maxRetry) {
+		this(id, messageTTS, hasRecognizer);
+		this.maxRetry = maxRetry;
 	}
 	
 	protected void setResults(ArrayList<String> resultsPositive, ArrayList<String> resultsNegative) {
@@ -115,6 +125,20 @@ public abstract class Job {
 		    }
 		}
 	    return null;
+	}
+	
+	public void addRetry() {
+		this.retry++;
+		Log.i(getClass().getCanonicalName(), "One Retry " + this.retry);
+	}
+	
+	public boolean canRetry() {
+		Log.i(getClass().getCanonicalName(), "canRetry " + (retry < maxRetry));
+		return retry < maxRetry;
+	}
+	
+	public void resetRetry() {
+		this.retry = 0;
 	}
 	
 }

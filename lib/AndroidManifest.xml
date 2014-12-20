@@ -23,16 +23,6 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         
-        <activity
-            android:name="com.android2ee.ttsjob.activity.TTSJobActivity">
-            
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        
         <receiver android:name="com.android2ee.ttsjob.broadcast.TTSJobBroadcast">
             <intent-filter>
 

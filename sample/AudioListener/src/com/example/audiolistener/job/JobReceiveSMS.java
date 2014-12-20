@@ -18,5 +18,16 @@ public class JobReceiveSMS extends Job {
 		listNegative.add("non");
 		setResults(listPositive, listNegative);
 	}
+	
+	public JobReceiveSMS(String message, int retry) {
+		// message getString(R.string.info_name, getNameinProgress()
+		super(UTTERANCE_MESSAGE_SMS_RECEIVED, message,  true, retry);
+		ArrayList<String> listPositive = new ArrayList<String>();
+		listPositive.add("oui");
+		listPositive.add("ouais");
+		ArrayList<String> listNegative = new ArrayList<String>();
+		listNegative.add("non");
+		setResults(listPositive, listNegative);
+	}
 
 }
