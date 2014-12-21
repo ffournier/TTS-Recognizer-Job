@@ -58,7 +58,7 @@ public abstract class TTSJobService extends Service implements JobInterface {
 		
 		state = StateMessage.IS_NOT_RUNNING;
 		
-		Log.e("TAG", "onCreate");
+		Log.i(getClass().getCanonicalName(), "TTSJobService onCreate");
 		
 		treatByType(MyPreferences.getType(this));
 		if (isBluetooth()) {
@@ -77,7 +77,7 @@ public abstract class TTSJobService extends Service implements JobInterface {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) 
 	{
-		Log.e("TAG", "onStartCommand");
+		Log.i(getClass().getCanonicalName(), "TTSJobService onStartCommand");
 		int result =  super.onStartCommand(intent, flags, startId);
 		if (intent != null) {
 			if (intent.getExtras() != null) {
@@ -87,7 +87,7 @@ public abstract class TTSJobService extends Service implements JobInterface {
 				}
 			}
 		} else {
-			Log.w("TAG", "No Intent");
+			Log.w(getClass().getCanonicalName(), "TTSJobService No Intent");
 		}
 		return result;
 	}
@@ -125,20 +125,24 @@ public abstract class TTSJobService extends Service implements JobInterface {
 	protected void treatPOJOObject(ValueList value, POJOObject object) {
 		TTSJobApplication app = TTSJobApplication.getInstance();
 		if (value.getValue() == ValueList.NORMAL.getValue()) {
+			Log.i(getClass().getCanonicalName(), "TTSJobService Normal new Message");
 			myQueueMessage.add(object);
 			newMessageInQueue();
 		} else if (value.getValue() == ValueList.HEADSET.getValue()) {
 			if (app.getHeadSet()) {
+				Log.i(getClass().getCanonicalName(), "TTSJobService Headset new Message");
 				myQueueMessage.add(object);
 				newMessageInQueue();
 			}
 		} else if (value.getValue() == ValueList.HEADSET_BT.getValue()) {
 			if (app.getHeadSetBT()) {
+				Log.i(getClass().getCanonicalName(), "TTSJobService HeadsetBT new Message");
 				myQueueMessage.add(object);
 				newMessageInQueue();
 			}
 		} else if (value.getValue() == ValueList.NONE.getValue()) {
 			// nothing
+			Log.i(getClass().getCanonicalName(), "TTSJobService None Message");
 		}
 	}
 	
@@ -175,8 +179,11 @@ public abstract class TTSJobService extends Service implements JobInterface {
 	@Override
 	public void endJobs(int result) {
 		// TODO with result
+		Log.i(getClass().getCanonicalName(), "TTSJobService End Jobs");
 		deleteProgressMessage();
 		state = StateMessage.IS_NOT_RUNNING;
+		// test now if we have a new Message in pending
+		newMessageInQueue();
 	}
 
 }
