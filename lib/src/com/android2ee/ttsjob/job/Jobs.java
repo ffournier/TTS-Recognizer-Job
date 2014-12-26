@@ -49,7 +49,7 @@ public class Jobs {
 		}
 	}
 	
-	public Job getNextJob(Job currentJob,JobAnswer result) {
+	public Job getNextJob(Job currentJob, Integer result) {
 		Job job = getNextSonJob(currentJob, result);
 		if (job == null) {
 			if (currentJob != null && result == JobAnswer.EMPTY && 
@@ -62,7 +62,7 @@ public class Jobs {
 		return job;
 	}
 	
-	private Job getNextSonJob(Job currentJob,JobAnswer result) {
+	private Job getNextSonJob(Job currentJob, Integer result) {
 		if (currentJob != null) {
 			if (currentJob.hasKey(result)){
 				return currentJob.getJobByKey(result);

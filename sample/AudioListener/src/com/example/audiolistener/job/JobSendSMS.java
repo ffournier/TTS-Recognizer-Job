@@ -26,8 +26,8 @@ public class JobSendSMS extends Job {
 	}
 	
 	@Override
-	public JobAnswer onResult(ArrayList<String> voiceResults) {
-		JobAnswer answer = super.onResult(voiceResults);
+	public Integer onResult(ArrayList<String> voiceResults) {
+		Integer answer = super.onResult(voiceResults);
 		if (answer !=  JobAnswer.EMPTY) {
 			sendSMSMessage(voiceResults.get(0));
 			return answer;

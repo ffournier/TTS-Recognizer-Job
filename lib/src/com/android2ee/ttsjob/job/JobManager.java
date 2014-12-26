@@ -234,8 +234,8 @@ public class JobManager implements RecognitionListener {
 			Log.i(getClass().getCanonicalName(), value);
 		}
 		Log.i(getClass().getCanonicalName(), "/************************************/");
-		JobAnswer result = job.onResult(voiceResults);
-		Log.i(getClass().getCanonicalName(), "result :" + result.name());
+		Integer result = job.onResult(voiceResults);
+		Log.i(getClass().getCanonicalName(), "result : " + result);
 		job = jobs.getNextJob(job, result);
 		if (job != null) {
 			startJob(job);

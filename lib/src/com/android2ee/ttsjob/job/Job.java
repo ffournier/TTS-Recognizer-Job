@@ -21,7 +21,7 @@ public abstract class Job {
 	static final int ERROR_MATCH_NOT_FOUND = 0;
 	static final int ERROR_RECOGNIZER = 1;
 	
-	HashMap<JobAnswer, Job> sonJob = new HashMap<JobAnswer, Job>();
+	HashMap<Integer, Job> sonJob = new HashMap<Integer, Job>();
 	
 	public Job(String id, String messageTTS, boolean hasRecognizer) {
 		this.id = id;
@@ -64,8 +64,8 @@ public abstract class Job {
 		return map;
 	}
 	
-	public JobAnswer onResult(ArrayList<String> voiceResults) {
-		JobAnswer result = JobAnswer.NOT_FOUND;
+	public Integer onResult(ArrayList<String> voiceResults) {
+		Integer result = JobAnswer.NOT_FOUND;
 		
 		if (voiceResults != null && voiceResults.size() > 0) {
 			for (String match : voiceResults) {
@@ -87,11 +87,11 @@ public abstract class Job {
 	}
 	
 	
-	public boolean hasKey(JobAnswer key) {
+	public boolean hasKey(Integer key) {
 		return getJobByKey(key) != null;
 	}
 	
-	public boolean addSonJob(JobAnswer key, Job job ) {
+	public boolean addSonJob(Integer key, Job job ) {
 		if (sonJob != null && job != null) {
 			if (!hasKey(key)) {
 				sonJob.put(key, job);
@@ -101,7 +101,7 @@ public abstract class Job {
 		return false;
 	}
 	
-	public Job getJobByKey(JobAnswer key) {
+	public Job getJobByKey(Integer key) {
 		if (sonJob != null) {
 			return sonJob.get(key);
 		}
@@ -115,9 +115,9 @@ public abstract class Job {
 	protected Job getJob(String id) {
 		if (sonJob != null) {
 			Job obj;
-			Iterator<Entry<JobAnswer, Job>> it = sonJob.entrySet().iterator();
+			Iterator<Entry<Integer, Job>> it = sonJob.entrySet().iterator();
 		    while (it.hasNext()) {
-		        Entry<JobAnswer, Job> pairs = it.next();
+		        Entry<Integer, Job> pairs = it.next();
 		        obj = (Job) pairs.getValue();
 		        if (obj != null && obj.getId() != null && obj.getId().equalsIgnoreCase(id)) {
 					return obj;
