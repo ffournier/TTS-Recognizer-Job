@@ -1,6 +1,7 @@
 package com.android2ee.ttsjob.broadcast;
 
 import android.bluetooth.BluetoothHeadset;
+import android.bluetooth.BluetoothProfile;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -39,9 +40,10 @@ public class TTSJobBroadcast extends BroadcastReceiver {
 			Log.i("TAG", "action : " + intent.getAction());
 			TTSJobApplication app = TTSJobApplication.getInstance();
 			int state = intent.getIntExtra(BluetoothHeadset.EXTRA_STATE, BluetoothHeadset.STATE_DISCONNECTED);
-            if (state == BluetoothHeadset.STATE_AUDIO_CONNECTED) {
+			Log.i("TAG", "action : " + state);
+            if (state == BluetoothHeadset.STATE_AUDIO_CONNECTED || state == BluetoothProfile.STATE_CONNECTING || state == BluetoothProfile.STATE_CONNECTED) {
             	app.setHeadSetBT(true);
-            } else if (state == BluetoothHeadset.STATE_AUDIO_DISCONNECTED){
+            } else if (state == BluetoothHeadset.STATE_AUDIO_DISCONNECTED || state == BluetoothProfile.STATE_DISCONNECTING || state == BluetoothProfile.STATE_DISCONNECTED){
             	app.setHeadSet(false);
             }
 		} else if (intent.getAction().equalsIgnoreCase(BluetoothHeadset.ACTION_VENDOR_SPECIFIC_HEADSET_EVENT)) {
