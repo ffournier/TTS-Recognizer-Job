@@ -137,8 +137,6 @@ isPreferenceLanguage is for the recognizer language if we take the language in p
 
 null is default
 
-Yes or true
-
 ```JAVA
 	@Override
 	protected Boolean isPreferenceLanguage() {
