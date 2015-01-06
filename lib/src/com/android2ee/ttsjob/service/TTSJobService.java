@@ -30,7 +30,7 @@ public abstract class TTSJobService extends Service implements JobInterface {
 	public static final String KEY_NAME = "com.android2ee.ttsjob.name";
 	
 	// variable
-	// save all objects to treat in queueMessage
+	// save all POJOObjects to treat in queueMessage, contains type of object
 	private ArrayList<POJOObject> myQueueMessage = new ArrayList<POJOObject>();
 	
 	// broadcast for
@@ -96,7 +96,7 @@ public abstract class TTSJobService extends Service implements JobInterface {
 		int result =  super.onStartCommand(intent, flags, startId);
 		if (intent != null) {
 			if (intent.getExtras() != null) {
-				// save Object in Extras in queue
+				// save POJOObject with type in Extras in queueMessage
 				POJOObject object = getMetaData(intent.getExtras());
 				if (object != null) {
 					treatPOJOObject(MyPreferences.getType(this), object);

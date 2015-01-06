@@ -7,7 +7,7 @@ package com.android2ee.ttsjob.service;
  */
 public abstract class POJOObject {
 	
-	// type (ALL, HeadSet, HeadSetBT, None)
+	// type of Object
 	String value;
 	
 	/**
