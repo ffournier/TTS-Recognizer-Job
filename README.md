@@ -23,7 +23,7 @@ Create a new class which extended the class Job
 
 Next into this class create a String key
 
-You need to pass in construtor 
+You need to pass in constructor 
 
   * the key you has created, this key is used to found this job in TTS.
   * the message who is read
