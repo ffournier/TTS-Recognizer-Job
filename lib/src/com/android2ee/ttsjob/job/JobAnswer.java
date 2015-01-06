@@ -1,5 +1,10 @@
 package com.android2ee.ttsjob.job;
 
+/**
+ * Class which enum the type of answer
+ * @author florian
+ *
+ */
 public class JobAnswer {
 	
 	public static final int NOT_FOUND = 0;

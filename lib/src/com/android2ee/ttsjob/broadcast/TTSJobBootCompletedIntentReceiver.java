@@ -4,6 +4,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+/**
+ * BroadCast on BootCompleted
+ * @author florian
+ *
+ */
 public abstract class TTSJobBootCompletedIntentReceiver extends BroadcastReceiver {
 
 	@Override

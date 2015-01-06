@@ -10,6 +10,11 @@ import android.util.Log;
 
 import com.android2ee.ttsjob.TTSJobApplication;
 
+/**
+ * BroadCast on ACTION_HEADSET_PLUG, ACTION_CONNECTION_STATE_CHANGED, ACTION_VENDOR_SPECIFIC_HEADSET_EVENT
+ * @author florian
+ *
+ */
 public class TTSJobBroadcast extends BroadcastReceiver {
 	
 	@Override
@@ -27,6 +32,7 @@ public class TTSJobBroadcast extends BroadcastReceiver {
 			Log.i("TAG", "microphone : " + extras.getInt("microphone"));
 			
 			TTSJobApplication app = TTSJobApplication.getInstance();
+			// set state HeadSet in application
 			switch (extras.getInt("state")) {
             case 0:
                 app.setHeadSet(false);
@@ -41,6 +47,7 @@ public class TTSJobBroadcast extends BroadcastReceiver {
 			TTSJobApplication app = TTSJobApplication.getInstance();
 			int state = intent.getIntExtra(BluetoothHeadset.EXTRA_STATE, BluetoothHeadset.STATE_DISCONNECTED);
 			Log.i("TAG", "action : " + state);
+			// set state HeadSetBT in application
             if (state == BluetoothHeadset.STATE_AUDIO_CONNECTED || state == BluetoothProfile.STATE_CONNECTING || state == BluetoothProfile.STATE_CONNECTED) {
             	app.setHeadSetBT(true);
             } else if (state == BluetoothHeadset.STATE_AUDIO_DISCONNECTED || state == BluetoothProfile.STATE_DISCONNECTING || state == BluetoothProfile.STATE_DISCONNECTED){

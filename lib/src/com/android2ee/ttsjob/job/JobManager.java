@@ -15,17 +15,28 @@ import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnUtteranceCompletedListener;
 import android.util.Log;
 
+/**
+ * Class which manage the jobs given
+ * @author florian
+ *
+ */
 public class JobManager implements RecognitionListener {
 	
+	// variable
+	// all jobs to execute
 	Jobs jobs;
+	// currentJob
 	Job job;
 	
+	// context
 	Context context;
 	
+	// TTS and Recognizer
 	TextToSpeech ttobj;
 	SpeechRecognizer recognizer;
 	Intent intentRecognizer;
 	
+	// handler to execute after the end of TTS.
 	Handler mHandler = new Handler();
 	
 	JobInterface jInterface;
@@ -33,7 +44,10 @@ public class JobManager implements RecognitionListener {
 	Boolean isPreferenceLanguage;
 	Long timeAfterStop;
 	
-	
+	/**
+	 * Constructor
+	 * @param context
+	 */
 	public JobManager(Context context) {
 		super();
 		this.context = context;
@@ -44,12 +58,21 @@ public class JobManager implements RecognitionListener {
 		timeAfterStop = null;
 	}
 	
+	/**
+	 * Construtor
+	 * @param context
+	 * @param pref
+	 * @param time
+	 */
 	public JobManager(Context context, Boolean pref, Long time) {
 		this(context);
 		isPreferenceLanguage = pref;
 		timeAfterStop = time;
 	}
 	
+	/**
+	 * init recognizer
+	 */
 	private void initRecognizer() {
 		intentRecognizer = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 		intentRecognizer.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
@@ -68,6 +91,9 @@ public class JobManager implements RecognitionListener {
 		recognizer.setRecognitionListener(this);
 	}
 	
+	/**
+	 * initTTS
+	 */
 	private void initTextToSpeech() {
 		ttobj = new TextToSpeech(context, 
 	      	      new TextToSpeech.OnInitListener() {
@@ -85,14 +111,26 @@ public class JobManager implements RecognitionListener {
 	      	);
 	}
 	
+	/**
+	 * Start Recognizer
+	 */
 	protected void startReconizer() {
 		startListenningRecognizer();
 	}
 	
+	/**
+	 * start listener on recognizer
+	 */
 	protected void startListenningRecognizer() {
 		recognizer.startListening(intentRecognizer);
 	}
 	
+	/**
+	 * Start Jobs
+	 * @param jobs
+	 * @param jInterface
+	 * @return
+	 */
 	public boolean startJobs(Jobs jobs, JobInterface jInterface) {
 		this.jInterface = jInterface;
 		if (jobs != null) {
@@ -105,6 +143,11 @@ public class JobManager implements RecognitionListener {
 		return false;
 	}
 	
+	/**
+	 * Start a Job given
+	 * @param job
+	 * @return
+	 */
 	private boolean startJob(Job job) {
 		this.job = job;
 		if (this.job != null) {
@@ -115,6 +158,10 @@ public class JobManager implements RecognitionListener {
 		return false;
 	}
 	
+	/**
+	 * Call when the all jobs are executed
+	 * @param result
+	 */
 	private void endJobs(int result) {
 		if (jobs != null) {
 			jobs.removeAll();
@@ -124,8 +171,12 @@ public class JobManager implements RecognitionListener {
 		}
 	}
 	
+	/**
+	 * Speak TTS of the current Job
+	 */
 	private void speakText(){
 		if (job != null) {
+			// save in map the current Job to found him later
 			HashMap<String, String> myHashAlarm = new HashMap<String, String>();
 			myHashAlarm = job.startTTS(myHashAlarm);
 	        int res = ttobj.speak(job.getMessageTTS(), TextToSpeech.QUEUE_FLUSH, myHashAlarm);
@@ -134,15 +185,18 @@ public class JobManager implements RecognitionListener {
 				@Override
 				public void onUtteranceCompleted(String utteranceId) {
 					Log.i(getClass().getCanonicalName(), "Speak onUtteranceCompleted");
+					// test which job was executed
 					if (utteranceId.equalsIgnoreCase(job.getId())) {
 						// start recognizer
 							mHandler.post(new Runnable() {
 							
 							@Override
 							public void run() {
+								// start recognizer 
 								if (job.hasRecognizer()) {
 									startReconizer();
 								} else {
+									// next job
 									job = jobs.getNextJob(job, JobAnswer.NO_VOICE_RECOGNIZE);
 									if (job != null) {
 										startJob(job);
@@ -174,10 +228,12 @@ public class JobManager implements RecognitionListener {
 
 	@Override
 	public void onError(int error) {
+		// treat Error
 		Log.i(getClass().getCanonicalName(), "Error Speech: " + error);
 		switch (error) {
 		case SpeechRecognizer.ERROR_NO_MATCH:
 		case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
+			// Retry if we can or pass to next job
 			if (job != null && job.canRetry()) {
 				job.addRetry();
 				startJob(job);
@@ -195,7 +251,7 @@ public class JobManager implements RecognitionListener {
 			}
 			break;
 		case SpeechRecognizer.ERROR_RECOGNIZER_BUSY:
-			// Rerun Job
+			// restart job 
 			if (job != null) {
 				startJob(job);
 			} else {
@@ -225,6 +281,7 @@ public class JobManager implements RecognitionListener {
 
 	@Override
 	public void onResults(Bundle results) {
+		// test the text listen in the current job
 		ArrayList<String> voiceResults = results
 	                .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
 		 //
@@ -234,9 +291,11 @@ public class JobManager implements RecognitionListener {
 			Log.i(getClass().getCanonicalName(), value);
 		}
 		Log.i(getClass().getCanonicalName(), "/************************************/");
-		Integer result = job.onResult(voiceResults);
-		Log.i(getClass().getCanonicalName(), "result : " + result);
-		job = jobs.getNextJob(job, result);
+		// get answer of the current job
+		Integer answer = job.onResult(voiceResults);
+		Log.i(getClass().getCanonicalName(), "answer : " + answer);
+		// get next job ( son or in list) in function of answer
+		job = jobs.getNextJob(job, answer);
 		if (job != null) {
 			startJob(job);
 		} else {
@@ -249,7 +308,11 @@ public class JobManager implements RecognitionListener {
 		
 	}
 	
+	/**
+	 * Clean the manager
+	 */
 	public void release() {
+		// clean the manager
 		if (recognizer != null) {
 			recognizer.stopListening();
 			recognizer.cancel();

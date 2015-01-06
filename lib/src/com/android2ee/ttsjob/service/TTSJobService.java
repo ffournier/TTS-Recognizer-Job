@@ -19,18 +19,26 @@ import com.android2ee.ttsjob.job.JobManager;
 import com.android2ee.ttsjob.job.JobManagerBT;
 import com.android2ee.ttsjob.job.Jobs;
 
+/**
+ * Service to manage the TTSJob
+ * @author florian
+ *
+ */
 public abstract class TTSJobService extends Service implements JobInterface {
 	
 	public static final String KEY_MESSAGE = "com.android2ee.ttsjob.message";
 	public static final String KEY_NAME = "com.android2ee.ttsjob.name";
 	
-	//StateMessage state;
-	
+	// variable
+	// save all objects to treat in queueMessage
 	private ArrayList<POJOObject> myQueueMessage = new ArrayList<POJOObject>();
 	
+	// broadcast for
 	TTSJobBroadcast broadcast;
+	// Manager
 	JobManager jobManager;
 	
+	// State of Service (if a Job Running)
 	StateMessage state;
 	
 	private enum StateMessage {
@@ -40,6 +48,11 @@ public abstract class TTSJobService extends Service implements JobInterface {
 	
 	private LocalBinder mBinder = new LocalBinder();
 
+	/**
+	 * Binder
+	 * @author florian
+	 *
+	 */
 	public class LocalBinder extends Binder {
 		
 		public TTSJobService getService() {
@@ -61,6 +74,7 @@ public abstract class TTSJobService extends Service implements JobInterface {
 		Log.i(getClass().getCanonicalName(), "TTSJobService onCreate");
 		
 		treatByType(MyPreferences.getType(this));
+		// start the good manager
 		if (isBluetooth()) {
 			jobManager = new JobManagerBT(this, isPreferenceLanguage(), getTimeAfterStop());
 		} else {
@@ -69,6 +83,7 @@ public abstract class TTSJobService extends Service implements JobInterface {
 		
 	}
 	
+	// method abstract
 	protected abstract boolean isBluetooth();
 	protected abstract POJOObject getMetaData(Bundle bundle);
 	protected abstract Boolean isPreferenceLanguage();
@@ -81,6 +96,7 @@ public abstract class TTSJobService extends Service implements JobInterface {
 		int result =  super.onStartCommand(intent, flags, startId);
 		if (intent != null) {
 			if (intent.getExtras() != null) {
+				// save Object in Extras in queue
 				POJOObject object = getMetaData(intent.getExtras());
 				if (object != null) {
 					treatPOJOObject(MyPreferences.getType(this), object);
@@ -92,14 +108,21 @@ public abstract class TTSJobService extends Service implements JobInterface {
 		return result;
 	}
 	
+	/**
+	 * Delete POJOObject Treated. (Fist)
+	 */
 	private void deleteProgressMessage() {
 		if (myQueueMessage.size() > 0) {
 			myQueueMessage.remove(0);
 		}
 	}
 
+	// method abstract
 	protected abstract Jobs addJobs(POJOObject object);
 	
+	/**
+	 * start New Jobs in function of First POJOObject in queueMesage
+	 */
 	private void newMessageInQueue() {
 		if (myQueueMessage.size() > 0) {
 			if (state == StateMessage.IS_NOT_RUNNING) {
@@ -113,15 +136,24 @@ public abstract class TTSJobService extends Service implements JobInterface {
 				}
 			}
 		} else {
+			// stop Service
 			release();
 			stopSelf();
 		}
 	}
 	
+	/**
+	 * Release manager
+	 */
 	private void release() {
 		jobManager.release();
 	}
 	
+	/**
+	 * Save the POJOObject in queueMessage in function of type choosen by user
+	 * @param value
+	 * @param object
+	 */
 	protected void treatPOJOObject(ValueList value, POJOObject object) {
 		TTSJobApplication app = TTSJobApplication.getInstance();
 		if (value.getValue() == ValueList.NORMAL.getValue()) {
@@ -146,7 +178,12 @@ public abstract class TTSJobService extends Service implements JobInterface {
 		}
 	}
 	
+	/**
+	 * Treat type choosen by user
+	 * @param value
+	 */
 	public void treatByType(ValueList value) {
+		// if HeadSetBT, HeadSet, ALL, register broadcast
 		if (value.getValue() <= ValueList.HEADSET.getValue()) {
 			registerHeadSet();
 		} else {
@@ -154,7 +191,9 @@ public abstract class TTSJobService extends Service implements JobInterface {
 		}
 	}
 
-	
+	/**
+	 * Register BroadCast
+	 */
 	private void registerHeadSet() {
 		if (broadcast == null) {
 			broadcast = new TTSJobBroadcast();
@@ -162,6 +201,9 @@ public abstract class TTSJobService extends Service implements JobInterface {
 		}
 	}
 	
+	/**
+	 * Unregister Broadcast
+	 */
 	private void unRegisterHeadSet() {
 		if (broadcast != null) {
 			unregisterReceiver(broadcast);
@@ -178,7 +220,7 @@ public abstract class TTSJobService extends Service implements JobInterface {
 
 	@Override
 	public void endJobs(int result) {
-		// TODO with result
+		// remove current POJOOBject
 		Log.i(getClass().getCanonicalName(), "TTSJobService End Jobs");
 		deleteProgressMessage();
 		state = StateMessage.IS_NOT_RUNNING;

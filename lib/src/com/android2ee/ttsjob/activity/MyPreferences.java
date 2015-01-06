@@ -21,12 +21,22 @@ import com.android2ee.ttsjob.R;
 import com.android2ee.ttsjob.service.TTSJobService;
 import com.android2ee.ttsjob.service.TTSJobService.LocalBinder;
 
+/**
+ * Class Preference
+ * implements Type Preference (ALL, HeadSetBT, HadSet, None) and Mic possibility (pb)
+ * @author florian
+ *
+ */
 public class MyPreferences extends PreferenceFragment implements OnPreferenceChangeListener {
 	
+	// variable
 	private ListPreference listPreference;
 	private SwitchPreference switchPreference;
 	protected TTSJobService mService;
 	
+	/**
+	 * Class connection
+	 */
 	private ServiceConnection mConnection = new ServiceConnection() {
 		
 		@Override
@@ -61,6 +71,8 @@ public class MyPreferences extends PreferenceFragment implements OnPreferenceCha
 	public void onStart() {
 		super.onStart();
 		
+		// start Service 
+		// TODO maybe bind service if started ?
 		Intent service = new Intent(getActivity(), TTSJobService.class);
 		getActivity().startService(service);
 		getActivity().bindService(service, mConnection, Service.BIND_AUTO_CREATE);
@@ -91,17 +103,30 @@ public class MyPreferences extends PreferenceFragment implements OnPreferenceCha
 		return true;
 	}
 	
+	/**
+	 * get preferences Mic
+	 * @param context
+	 * @return
+	 */
 	public static boolean isMicBT(Context context) {
-		
 		return PreferenceManager.getDefaultSharedPreferences(context).getBoolean("mic_bt_preference", false);
 	}
 	
+	/**
+	 * Get preferences type (All, HeadSetBT, HeadSet, None)
+	 * @param context
+	 * @return
+	 */
 	public static ValueList getType(Context context) {
 		return ValueList.fromString(PreferenceManager.getDefaultSharedPreferences(context)
 									.getString("type_preference", ValueList.NONE.getValueString()));
 	}
 	
-	
+	/**
+	 * Enum Class for Type (All, HeadSet, HeadSetBT, None)
+	 * @author florian
+	 *
+	 */
 	public enum ValueList {
 		NORMAL(1),
 		HEADSET(2),
@@ -110,14 +135,29 @@ public class MyPreferences extends PreferenceFragment implements OnPreferenceCha
 		
 		private int value;
 
+		/**
+		 * Constructor
+		 * @param value
+		 */
         private ValueList(int value) {
                 this.value = value;
         }
         
+        /**
+         * Getter Value
+         * @return
+         */
         public int getValue() { return value;}
         
+        /**
+         * Getter String Value
+         * @return
+         */
         public String getValueString() { return String.valueOf(value);}
         
+        /**
+         * Map to store all value of Enum
+         */
         private static final Map<Integer, ValueList> intToTypeMap = new HashMap<Integer, ValueList>();
         static {
             for (ValueList type : ValueList.values()) {
@@ -125,6 +165,11 @@ public class MyPreferences extends PreferenceFragment implements OnPreferenceCha
             }
         }
 
+        /**
+         * Static getter Value
+         * @param i, value enum
+         * @return
+         */
         public static ValueList fromInt(int i) {
         	ValueList type = intToTypeMap.get(Integer.valueOf(i));
             if (type == null) 
@@ -132,6 +177,11 @@ public class MyPreferences extends PreferenceFragment implements OnPreferenceCha
             return type;
         }
         
+        /**
+         * Static getter Value
+         * @param value: string value enum
+         * @return
+         */
         public static ValueList fromString(String value) {
         	ValueList type = intToTypeMap.get(Integer.parseInt(value));
             if (type == null) 

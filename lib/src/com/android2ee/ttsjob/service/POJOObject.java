@@ -1,9 +1,19 @@
 package com.android2ee.ttsjob.service;
 
-public class POJOObject {
+/**
+ * abstract class to get information to create jobs to start
+ * @author florian
+ *
+ */
+public abstract class POJOObject {
 	
+	// type (ALL, HeadSet, HeadSetBT, None)
 	String value;
 	
+	/**
+	 * Constructor
+	 * @param value
+	 */
 	public POJOObject(String value) {
 		super();
 		this.value = value;

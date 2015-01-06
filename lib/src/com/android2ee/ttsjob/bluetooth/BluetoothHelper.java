@@ -3,9 +3,10 @@ package com.android2ee.ttsjob.bluetooth;
 import android.content.Context;
 import android.util.Log;
 
-//inner class
-//BluetoothHeadSetUtils is an abstract class that has
-//4 abstracts methods that need to be implemented.
+/**
+ * BlueTooth helper
+ * @author florian
+ */
 public class BluetoothHelper extends BluetoothHeadSetUtils
 {
 	 private BlueToothState listener;
@@ -19,27 +20,27 @@ public class BluetoothHelper extends BluetoothHeadSetUtils
 	 
 	 @Override
 	 public void onHeadsetDisconnected() {
-		 Log.e("TAG", "onHeadsetDisconnected");
+		 Log.i("TAG", "onHeadsetDisconnected");
 			
 	 }
 
 
 	 @Override
 	 public void onHeadsetConnected() {
-		 Log.e("TAG", "onHeadsetConnected");
+		 Log.i("TAG", "onHeadsetConnected");
 		 
 	 }
 
 
 	 @Override
 	 public void onScoAudioDisconnected() {
-		 Log.e("TAG", "onScoAudioDisconnected");
+		 Log.i("TAG", "onScoAudioDisconnected");
 	 }
 
 
 	 @Override
 	 public void onScoAudioConnected() {
-		 Log.e("TAG", "onScoAudioConnected");
+		 Log.i("TAG", "onScoAudioConnected");
 		 if (listener != null) {
 			 Log.e("TAG", "onReady");
 			 listener.onReady();
@@ -49,7 +50,7 @@ public class BluetoothHelper extends BluetoothHeadSetUtils
 
 
 	public void setOnBlueToothState( BlueToothState listener) {
-		 Log.e("TAG", "BlueToothState");
+	Log.i("TAG", "BlueToothState");
     	this.listener = listener;
     }
 }
