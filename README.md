@@ -12,12 +12,10 @@ You can active job all time, when you have an Headset, HeadSetBt, or none.
 // TODO create documention and link it
 
 #Use It
-
-##Job
-
 First to use this library you must create Job what you need in your application
 
-### How to create a job
+
+##Job
 
 Create a new class which extended the class Job
 
