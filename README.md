@@ -1,4 +1,4 @@
-TTSJob
+TTS-Recognizer-Job
 ======
 
 # Library
@@ -8,8 +8,6 @@ This is an library to use the TextToSpeech and SpeechRecognizer.
 You can create an set of Job (Listen , then Talk) in depends of the answer of each Job.
 
 You can active job all time, when you have an Headset, HeadSetBt, or none.
-
-// TODO create documention and link it
 
 #Use It
 First to use this library you must create Job what you need in your application
