@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import android.app.Service;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioManager;
+import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -13,6 +15,7 @@ import android.util.Log;
 import com.android2ee.ttsjob.TTSJobApplication;
 import com.android2ee.ttsjob.activity.MyPreferences;
 import com.android2ee.ttsjob.activity.MyPreferences.ValueList;
+import com.android2ee.ttsjob.broadcast.AudioIntentReceiver;
 import com.android2ee.ttsjob.broadcast.TTSJobBroadcast;
 import com.android2ee.ttsjob.job.JobInterface;
 import com.android2ee.ttsjob.job.JobManager;
@@ -29,6 +32,8 @@ public abstract class TTSJobService extends Service implements JobInterface {
 	public static final String KEY_MESSAGE = "com.android2ee.ttsjob.message";
 	public static final String KEY_NAME = "com.android2ee.ttsjob.name";
 	
+	private boolean isOnPause = false;
+	
 	// variable
 	// save all POJOObjects to treat in queueMessage, contains type of object
 	private ArrayList<POJOObject> myQueueMessage = new ArrayList<POJOObject>();
@@ -40,6 +45,11 @@ public abstract class TTSJobService extends Service implements JobInterface {
 	
 	// State of Service (if a Job Running)
 	StateMessage state;
+	
+	OnAudioFocusChangeListener listenerAudioFocus;
+	AudioFocusHelper audioHelper;
+	
+	AudioIntentReceiver receiverAudio;
 	
 	private enum StateMessage {
 		IS_RUNNING,
@@ -81,6 +91,42 @@ public abstract class TTSJobService extends Service implements JobInterface {
 			jobManager = new JobManager(this, isPreferenceLanguage(), getTimeAfterStop());
 		}
 		
+		listenerAudioFocus = new OnAudioFocusChangeListener() {
+			
+			@Override
+			public void onAudioFocusChange(int focusChange) {
+				if ( focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK ) {
+					//pause
+					pauseSystem();
+				} else if ( focusChange == AudioManager.AUDIOFOCUS_GAIN ) {
+					// normal
+					resumeSystem();
+				}
+				
+			}
+		};
+	}
+	
+	/**
+	 * Pause System TTSJob
+	 */
+	public void pauseSystem() {
+		isOnPause = true;
+		if (state == StateMessage.IS_RUNNING) {
+			this.jobManager.pauseJob();
+		} else {
+			newMessageInQueue();
+		}
+	}
+	
+	/**
+	 * Resume System TTSJob
+	 */
+	public void resumeSystem() {
+		isOnPause = false;
+		if (state == StateMessage.IS_RUNNING) {
+			this.jobManager.resumeJob();
+		}
 	}
 	
 	// method abstract
@@ -125,13 +171,16 @@ public abstract class TTSJobService extends Service implements JobInterface {
 	 */
 	private void newMessageInQueue() {
 		if (myQueueMessage.size() > 0) {
-			if (state == StateMessage.IS_NOT_RUNNING) {
+			isOnPause = AudioFocusHelper.isOnPause(this);
+			
+			if (!isOnPause && state == StateMessage.IS_NOT_RUNNING) {
 				// start
 				
 				Jobs jobs = addJobs(myQueueMessage.get(0));
 				if (jobs != null) {
 					if (jobManager.startJobs(jobs, this)) {
 						state = StateMessage.IS_RUNNING;
+						initAudio();
 					}
 				}
 			}
@@ -139,6 +188,37 @@ public abstract class TTSJobService extends Service implements JobInterface {
 			// stop Service
 			release();
 			stopSelf();
+		}
+	}
+	
+	
+	/**
+	 * init Audio receiver
+	 */
+	private void initAudio() {
+		
+		
+		audioHelper = new AudioFocusHelper(this);
+		
+		audioHelper.requestFocus(listenerAudioFocus);
+		receiverAudio = new AudioIntentReceiver(this);
+		
+		registerReceiver(receiverAudio, new IntentFilter(android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY));
+	}
+	
+	/**
+	 * Stop Audio Receiver
+	 */
+	private void stopAudio() {
+		
+		if (audioHelper != null) {
+			audioHelper.abandonFocus(listenerAudioFocus);
+			audioHelper = null;
+		}
+		
+		if (receiverAudio != null) {
+			unregisterReceiver(receiverAudio);
+			receiverAudio = null;
 		}
 	}
 	
@@ -215,6 +295,7 @@ public abstract class TTSJobService extends Service implements JobInterface {
 	public void onDestroy() {
 		release();
 		unRegisterHeadSet();
+		stopAudio();
 		super.onDestroy();
 	}
 
@@ -224,6 +305,7 @@ public abstract class TTSJobService extends Service implements JobInterface {
 		Log.i(getClass().getCanonicalName(), "TTSJobService End Jobs");
 		deleteProgressMessage();
 		state = StateMessage.IS_NOT_RUNNING;
+		stopAudio();
 		// test now if we have a new Message in pending
 		newMessageInQueue();
 	}
