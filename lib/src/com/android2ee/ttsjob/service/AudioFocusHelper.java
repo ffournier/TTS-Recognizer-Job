@@ -3,6 +3,7 @@ package com.android2ee.ttsjob.service;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
+import android.util.Log;
 
 public class AudioFocusHelper {
 	
@@ -20,14 +21,18 @@ public class AudioFocusHelper {
 	}
 
     public boolean requestFocus(OnAudioFocusChangeListener listener) {
-        return AudioManager.AUDIOFOCUS_REQUEST_GRANTED ==
+        boolean result = AudioManager.AUDIOFOCUS_REQUEST_GRANTED ==
             mAudioManager.requestAudioFocus(listener, AudioManager.STREAM_MUSIC,
-            AudioManager.AUDIOFOCUS_GAIN);
+            AudioManager.AUDIOFOCUS_GAIN_TRANSIENT);
+        Log.i(getClass().getCanonicalName(), "requestFocus " + result);
+        return result;
     }
 
     public boolean abandonFocus(OnAudioFocusChangeListener listener) {
-        return AudioManager.AUDIOFOCUS_REQUEST_GRANTED ==
+        boolean result =  AudioManager.AUDIOFOCUS_REQUEST_GRANTED ==
             mAudioManager.abandonAudioFocus(listener);
+        Log.i(getClass().getCanonicalName(), "abandonFocus " + result);
+        return result;
     }
     
 }

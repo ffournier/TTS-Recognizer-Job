@@ -81,6 +81,12 @@ public class JobManager implements RecognitionListener {
 		isOnPause = false;
 	}
 	
+	
+	
+	public boolean isRecognizerStarted() {
+		return recognizerStarted;
+	}
+
 	/**
 	 * init recognizer
 	 */
@@ -137,8 +143,10 @@ public class JobManager implements RecognitionListener {
 		if (!isOnPause) {
 			Log.i(getClass().getCanonicalName(), "startListenningRecognizer");
 			hasTreat = false;
-			recognizer.startListening(intentRecognizer);
-			recognizerStarted = true;
+			if (recognizer != null) {
+				recognizer.startListening(intentRecognizer);
+				recognizerStarted = true;
+			}
 		}
 	}
 	
@@ -165,11 +173,17 @@ public class JobManager implements RecognitionListener {
 	 * Pause Current Job
 	 */
 	public void pauseJob() {
-		isOnPause = true;
-		if (job != null) {
-			stopJob();
+		// if recognizer was started, we know that's him has the focus audio ;).
+		if (!recognizerStarted) {
+			Log.i(getClass().getCanonicalName(), "Pause Job");
+			isOnPause = true;
+			if (job != null) {
+				stopJob();
+			} else {
+				endJobs(Jobs.ERROR);
+			}
 		} else {
-			endJobs(Jobs.ERROR);
+			Log.i(getClass().getCanonicalName(), "Recognizer has focus audio");
 		}
 	}
 	
@@ -177,11 +191,13 @@ public class JobManager implements RecognitionListener {
 	 * Resume Current Job
 	 */
 	public void resumeJob() {
-		isOnPause = false;
-		if (job != null) {
-			startJob(job);
-		} else {
-			endJobs(Jobs.ERROR);
+		if (isOnPause) {
+			isOnPause = false;
+			if (job != null) {
+				startJob(job);
+			} else {
+				endJobs(Jobs.ERROR);
+			}
 		}
 	}
 	
@@ -290,7 +306,7 @@ public class JobManager implements RecognitionListener {
 	public void onError(int error) {
 		if (!isOnPause) {
 			// treat Error
-			Log.i(getClass().getCanonicalName(), "Error Speech: " + error);
+			Log.i(getClass().getCanonicalName(), "Error Speech: " + error + " hasTreat " + hasTreat);
 			if (!hasTreat) {
 				hasTreat = true;
 				switch (error) {
@@ -315,11 +331,19 @@ public class JobManager implements RecognitionListener {
 					break;
 				case SpeechRecognizer.ERROR_RECOGNIZER_BUSY:
 					// restart job 
-					if (job != null) {
-						startJob(job);
-					} else {
-						endJobs(Jobs.ERROR);
-					}
+					//delayed message 1s
+					Handler handler = new Handler();
+					handler.postDelayed(new Runnable() {
+						
+						@Override
+						public void run() {
+							if (job != null) {
+								startJob(job);
+							} else {
+								endJobs(Jobs.ERROR);
+							}
+						}
+					}, 1000);
 					break;
 				case SpeechRecognizer.ERROR_AUDIO:
 				case SpeechRecognizer.ERROR_CLIENT:

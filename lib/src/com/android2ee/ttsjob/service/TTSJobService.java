@@ -9,6 +9,7 @@ import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.os.Binder;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -32,8 +33,6 @@ public abstract class TTSJobService extends Service implements JobInterface {
 	public static final String KEY_MESSAGE = "com.android2ee.ttsjob.message";
 	public static final String KEY_NAME = "com.android2ee.ttsjob.name";
 	
-	private boolean isOnPause = false;
-	
 	// variable
 	// save all POJOObjects to treat in queueMessage, contains type of object
 	private ArrayList<POJOObject> myQueueMessage = new ArrayList<POJOObject>();
@@ -50,6 +49,8 @@ public abstract class TTSJobService extends Service implements JobInterface {
 	AudioFocusHelper audioHelper;
 	
 	AudioIntentReceiver receiverAudio;
+	
+	Handler mHandler;
 	
 	private enum StateMessage {
 		IS_RUNNING,
@@ -75,11 +76,26 @@ public abstract class TTSJobService extends Service implements JobInterface {
 		return mBinder;
 	}
 	
+	private Runnable myAttempts = new Runnable() {
+		
+		@Override
+		public void run() {
+			// we requets now the focus init
+			if (audioHelper != null) {
+				if ( audioHelper.requestFocus(listenerAudioFocus) ) {
+					resumeSystem();
+				}
+			}
+		}
+	};
+	
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		
 		state = StateMessage.IS_NOT_RUNNING;
+		
+		mHandler = null;
 		
 		Log.i(getClass().getCanonicalName(), "TTSJobService onCreate");
 		
@@ -95,12 +111,27 @@ public abstract class TTSJobService extends Service implements JobInterface {
 			
 			@Override
 			public void onAudioFocusChange(int focusChange) {
-				if ( focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK ) {
+				if (mHandler != null) {
+					mHandler.removeCallbacks(myAttempts);
+				}
+				Log.i(getClass().getCanonicalName(), "AUDIOFOCUS " + focusChange);
+				if ( focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK  || 
+						 focusChange == AudioManager.AUDIOFOCUS_LOSS || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
 					//pause
+					Log.i(getClass().getCanonicalName(), "AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK || AUDIOFOCUS_LOSS || AUDIOFOCUS_LOSS_TRANSIENT");
 					pauseSystem();
-				} else if ( focusChange == AudioManager.AUDIOFOCUS_GAIN ) {
+					// run the message after 5 seconds
+					if (mHandler == null) {
+						mHandler = new Handler();
+					}
+					mHandler.postDelayed(myAttempts, 5*1000);
+				} else if ( focusChange == AudioManager.AUDIOFOCUS_GAIN || focusChange == AudioManager.AUDIOFOCUS_GAIN_TRANSIENT ||
+						focusChange == AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK) {
 					// normal
+					Log.i(getClass().getCanonicalName(), "AUDIOFOCUS_GAIN || AUDIOFOCUS_GAIN_TRANSIENT || AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK");
 					resumeSystem();
+				} else {
+					Log.i(getClass().getCanonicalName(), "AUDIOFOCUS unknow");
 				}
 				
 			}
@@ -111,7 +142,6 @@ public abstract class TTSJobService extends Service implements JobInterface {
 	 * Pause System TTSJob
 	 */
 	public void pauseSystem() {
-		isOnPause = true;
 		if (state == StateMessage.IS_RUNNING) {
 			this.jobManager.pauseJob();
 		} else {
@@ -123,7 +153,6 @@ public abstract class TTSJobService extends Service implements JobInterface {
 	 * Resume System TTSJob
 	 */
 	public void resumeSystem() {
-		isOnPause = false;
 		if (state == StateMessage.IS_RUNNING) {
 			this.jobManager.resumeJob();
 		}
@@ -171,19 +200,24 @@ public abstract class TTSJobService extends Service implements JobInterface {
 	 */
 	private void newMessageInQueue() {
 		if (myQueueMessage.size() > 0) {
-			isOnPause = AudioFocusHelper.isOnPause(this);
+			boolean isOnPause = AudioFocusHelper.isOnPause(this);
 			
-			if (!isOnPause && state == StateMessage.IS_NOT_RUNNING) {
+			Log.i(getClass().getCanonicalName(), "newMessageInQueue isOnPause " + isOnPause);
+			if (!isOnPause) {
+				if(state == StateMessage.IS_NOT_RUNNING) {
 				// start
 				
 				Jobs jobs = addJobs(myQueueMessage.get(0));
-				if (jobs != null) {
-					if (jobManager.startJobs(jobs, this)) {
-						state = StateMessage.IS_RUNNING;
-						initAudio();
+					if (jobs != null) {
+						if (jobManager.startJobs(jobs, this)) {
+							state = StateMessage.IS_RUNNING;
+							initAudio();
+						}
 					}
+				} else {
+					resumeSystem();
 				}
-			}
+			} 
 		} else {
 			// stop Service
 			release();
@@ -296,6 +330,10 @@ public abstract class TTSJobService extends Service implements JobInterface {
 		release();
 		unRegisterHeadSet();
 		stopAudio();
+		
+		if (mHandler != null) {
+			mHandler.removeCallbacks(myAttempts);
+		}
 		super.onDestroy();
 	}
 
