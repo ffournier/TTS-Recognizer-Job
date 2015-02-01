@@ -1,7 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">AudioListener</string>
+    <string name="app_name">JobVoice</string>
     
-	<string name="info_name">Vous avez reçu un message de %s. Voulez vous que je lise ce message ?</string>
+	<string name="info_name">Vous avez reçu un message de %1$s. Voulez vous que je lise ce message ?</string>
+	
+	<string name="send_message">%1$s . Voulez vous envoyer un message à %2$s ?</string>
+	
+	<string name="end_message">Opération terminée. merci !</string>
+	
+	<string name="say_message">Annoncez le message ?</string>
+	
+	<string name="sent_message"> %1$s . Message envoyé</string>
+	
+	<string name="sent_no_message"> Message non envoyé</string>
+	
+	<string name="yes">oui</string>
+	<string name="yes2">ouais</string>
+	<string name="no">non</string>
+	
+	<string name="init_call">Voulez vous rappeler %1$s ?</string>
 </resources>

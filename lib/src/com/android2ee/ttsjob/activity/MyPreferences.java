@@ -15,7 +15,6 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.preference.SwitchPreference;
 
 import com.android2ee.ttsjob.R;
 import com.android2ee.ttsjob.service.TTSJobService;

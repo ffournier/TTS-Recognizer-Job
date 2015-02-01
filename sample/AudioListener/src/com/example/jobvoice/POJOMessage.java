@@ -1,4 +1,4 @@
-package com.example.audiolistener;
+package com.example.jobvoice;
 
 import com.android2ee.ttsjob.service.POJOObject;
 
@@ -9,10 +9,11 @@ public class POJOMessage extends POJOObject {
 	public String name;
 	
 	public static final String KEY_SMS = "treatSMS";
+	public static final String KEY_INCOMINGCALL = "treatCall";
 	
 	
-	public POJOMessage(String message, String phoneNumber, String name) {
-		super(KEY_SMS);
+	public POJOMessage(String key, String message, String phoneNumber, String name) {
+		super(key);
 		this.message = message;
 		this.phoneNumber = phoneNumber;
 		this.name = name;
@@ -36,6 +37,10 @@ public class POJOMessage extends POJOObject {
 	
 	public static boolean isSMSType(POJOObject object) {
 		return isType(object, KEY_SMS);
+	}
+	
+	public static boolean isInComingCallType(POJOObject object) {
+		return isType(object, KEY_INCOMINGCALL);
 	}
 	
 }

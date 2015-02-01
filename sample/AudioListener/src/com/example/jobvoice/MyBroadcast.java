@@ -1,4 +1,4 @@
-package com.example.audiolistener;
+package com.example.jobvoice;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,11 +13,11 @@ public class MyBroadcast extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		if (intent.getAction().equalsIgnoreCase(Telephony.Sms.Intents.SMS_RECEIVED_ACTION)) {
-			Log.i("TAG", "action : " + intent.getAction());
+			Log.i(getClass().getCanonicalName(), "action : " + intent.getAction());
 			// get SMS received
 			receivedSMS(context, intent);
 		} else {
-			Log.w("TAG", "action unknwon : " + intent.getAction());
+			Log.w(getClass().getCanonicalName(), "action unknwon : " + intent.getAction());
 			//sendMessage(context, "Test pour savoir si cela passe", montel);
 		}
 	}
@@ -40,7 +40,7 @@ public class MyBroadcast extends BroadcastReceiver {
                     String senderNum = phoneNumber;
                     String message = currentMessage.getDisplayMessageBody();
  
-                    Log.e("SmsReceiver", "senderNum: "+ senderNum + "; message: " + message);
+                    Log.i(getClass().getCanonicalName(), "senderNum: "+ senderNum + "; message: " + message);
                     sendMessage(context, message, senderNum);
         			break;
                 } // end for loop
@@ -48,17 +48,18 @@ public class MyBroadcast extends BroadcastReceiver {
               } // bundle is null
  
         } catch (Exception e) {
-            Log.e("SmsReceiver", "Exception smsReceiver" +e);
+            Log.e(getClass().getCanonicalName(), "Exception smsReceiver" +e);
              
         }
 	}
 	
 	private void sendMessage(Context context, String message, String senderNum) {
 		Intent service = new Intent(context, MyService.class);
+		service.putExtra(MyService.KEY_NAME, MyService.KEY_SMS);
 		service.putExtra(MyService.KEY_MESSAGE, message);
-		service.putExtra(MyService.KEY_NAME, senderNum);
+		service.putExtra(MyService.KEY_PHONE_NUMBER, senderNum);
 		context.startService(service); 
-		Log.e("SmsReceiver", "Start Service");
+		Log.i(getClass().getCanonicalName(), "Start Service");
 	}
 	
 }
