@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Telephony;
 import android.telephony.SmsMessage;
 import android.util.Log;
@@ -54,12 +55,17 @@ public class MyBroadcast extends BroadcastReceiver {
 	}
 	
 	private void sendMessage(Context context, String message, String senderNum) {
-		Intent service = new Intent(context, MyService.class);
-		service.putExtra(MyService.KEY_NAME, MyService.KEY_SMS);
-		service.putExtra(MyService.KEY_MESSAGE, message);
-		service.putExtra(MyService.KEY_PHONE_NUMBER, senderNum);
-		context.startService(service); 
-		Log.i(getClass().getCanonicalName(), "Start Service");
+		
+		// watch if we must treat that
+		if (ToolPref.treatSMS(context)) {
+		
+			Intent service = new Intent(context, MyService.class);
+			service.putExtra(MyService.KEY_NAME, MyService.KEY_SMS);
+			service.putExtra(MyService.KEY_MESSAGE, message);
+			service.putExtra(MyService.KEY_PHONE_NUMBER, senderNum);
+			context.startService(service); 
+			Log.i(getClass().getCanonicalName(), "Start Service SMS");
+		}
 	}
 	
 }

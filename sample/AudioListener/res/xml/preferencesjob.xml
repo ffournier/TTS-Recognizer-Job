@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android">
+        
+     <PreferenceCategory
+            android:title="@string/pref_category_type_job">
+		<ListPreference
+                android:key="type_preference_job"
+                android:title="@string/title_type_job_preference"
+                android:summary="@string/summary_type_job_preference"
+                android:entries="@array/entries_type_job_preference"
+                android:entryValues="@array/entryvalues_type_job_preference"
+                android:dialogTitle="@string/dialog_type_job_preference"
+                android:defaultValue="4" />
+	</PreferenceCategory>
+</PreferenceScreen>

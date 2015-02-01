@@ -23,10 +23,10 @@ public class JobInComingCall extends Job {
 		this.context = context;
 		this.phoneNumber = phoneNumber;
 		ArrayList<String> listPositive = new ArrayList<String>();
-		listPositive.add("oui");
-		listPositive.add("ouais");
+		listPositive.add(context.getString(R.string.callback));
 		ArrayList<String> listNegative = new ArrayList<String>();
-		listNegative.add("non");
+		listNegative.add(context.getString(R.string.message));
+		listNegative.add(context.getString(R.string.message2));
 		setResults(listPositive, listNegative);
 	}
 	
@@ -36,22 +36,23 @@ public class JobInComingCall extends Job {
 		this.context = context;
 		this.phoneNumber = phoneNumber;
 		ArrayList<String> listPositive = new ArrayList<String>();
-		listPositive.add("oui");
-		listPositive.add("ouais");
+		listPositive.add(context.getString(R.string.callback));
 		ArrayList<String> listNegative = new ArrayList<String>();
-		listNegative.add("non");
+		listNegative.add(context.getString(R.string.message));
+		listNegative.add(context.getString(R.string.message2));
 		setResults(listPositive, listNegative);
 	}
 	
 	@Override
 	public Integer onResult(ArrayList<String> voiceResults) {
 		Integer answer = super.onResult(voiceResults);
-		if (answer !=  JobAnswer.POSITIVE_ANSWER) {
+		if (answer ==  JobAnswer.POSITIVE_ANSWER) {
 			// call
 			 String uri = "tel:" + phoneNumber.trim() ;
 			 Intent intent = new Intent(Intent.ACTION_CALL);
+			 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			 intent.setData(Uri.parse(uri));
-			 context.startActivity(intent);
+			 context.getApplicationContext().startActivity(intent);
 			 return answer;
 		}
 		return answer;

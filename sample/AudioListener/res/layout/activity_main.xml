@@ -7,23 +7,32 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal">
     
-    <Button android:id="@+id/button"
-        	android:layout_width="match_parent"
-	    	android:layout_height="wrap_content"
-	    	android:layout_weight="1"
-	    	android:text="Test"/>
-    <Button android:id="@+id/button_stop"
-        	android:layout_width="match_parent"
-	    	android:layout_height="wrap_content"
-	    	android:layout_weight="1"
-	    	android:text="Stop"/>
+	    <Button android:id="@+id/button"
+	        	android:layout_width="match_parent"
+		    	android:layout_height="wrap_content"
+		    	android:layout_weight="1"
+		    	android:text="Test"
+		    	style="?android:attr/buttonBarButtonStyle"/>
+	    <Button android:id="@+id/button_stop"
+	        	android:layout_width="match_parent"
+		    	android:layout_height="wrap_content"
+		    	android:layout_weight="1"
+		    	android:text="Stop"
+		    	style="?android:attr/buttonBarButtonStyle"/>
     </LinearLayout>
     
     <fragment
 	    android:name="com.android2ee.ttsjob.activity.MyPreferences"
 	    android:layout_width="match_parent"
-	    android:layout_height="match_parent"
+	    android:layout_height="wrap_content"
 	    android:id="@+id/preferences_fragment">
+	</fragment>
+	
+    <fragment
+	    android:name="com.example.jobvoice.MyPreferencesJob"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:id="@+id/preferences_job_fragment">
 	</fragment>
    
 </LinearLayout>

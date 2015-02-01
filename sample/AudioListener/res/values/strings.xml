@@ -16,8 +16,25 @@
 	<string name="sent_no_message"> Message non envoyé</string>
 	
 	<string name="yes">oui</string>
+	
 	<string name="yes2">ouais</string>
+	
 	<string name="no">non</string>
 	
-	<string name="init_call">Voulez vous rappeler %1$s ?</string>
+	<string name="init_call">Voulez vous rappeler ou envoyer un message à %1$s ?</string>
+	
+	<string name="callback">rappeler</string>
+	
+	<string name="message">envoyer un message</string>
+	
+	<string name="message2">message</string>
+	
+	<string name="pref_category_type_job">Job</string>
+    
+    <string name="title_type_job_preference">Job Works</string>
+    
+    <string name="summary_type_job_preference">Choose your jobs works</string>
+    
+    <string name="dialog_type_job_preference">Dialog Jobs</string>
+    
 </resources>

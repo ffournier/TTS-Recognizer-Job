@@ -12,7 +12,6 @@ import com.android2ee.ttsjob.job.JobAnswer;
 import com.android2ee.ttsjob.job.Jobs;
 import com.android2ee.ttsjob.service.POJOObject;
 import com.android2ee.ttsjob.service.TTSJobService;
-import com.example.jobvoice.R;
 import com.example.jobvoice.job.JobEndSMS;
 import com.example.jobvoice.job.JobInComingCall;
 import com.example.jobvoice.job.JobReadSMS;
@@ -62,7 +61,7 @@ public class MyService extends TTSJobService {
 				Log.i(getClass().getCanonicalName(), "getMetaData Message " + phoneNumber + "   " + name);
 				return new POJOMessage(POJOMessage.KEY_SMS, message, phoneNumber, name);
 			} else if (key.equalsIgnoreCase(KEY_INCOMINGCALL)) {
-				String phoneNumber = bundle.getString(KEY_NAME);
+				String phoneNumber = bundle.getString(KEY_PHONE_NUMBER);
 				String name = getContact(phoneNumber);
 				Log.i(getClass().getCanonicalName(), "getMetaData InComingCall " + phoneNumber + "   " + name);
 				return new POJOMessage(POJOMessage.KEY_INCOMINGCALL, "", phoneNumber, name);
@@ -78,8 +77,8 @@ public class MyService extends TTSJobService {
 		if (POJOMessage.isSMSType(object)) {
 			POJOMessage message = (POJOMessage) object;
 			jobs = new Jobs();
-			JobReceiveSMS jobReceiveSMS = new JobReceiveSMS(this, getString(R.string.info_name, message.getValidateName()), MAX_RETRY);
-			JobReadSMS jobReadSMS = new JobReadSMS(this, getString(R.string.send_message, message.getMessage(),message.getValidateName()), MAX_RETRY);
+			JobReceiveSMS jobReceiveSMS = new JobReceiveSMS(this, message.getValidateName(), MAX_RETRY);
+			JobReadSMS jobReadSMS = new JobReadSMS(this, message.getMessage(),message.getValidateName(), MAX_RETRY);
 			JobSendSMS jobSendSMS = new JobSendSMS(this, message.getPhoneNumber(), MAX_RETRY);
 			JobSentSMS jobSentSMS = new JobSentSMS();
 			jobSendSMS.addSonJob(JobAnswer.NOT_FOUND, jobSentSMS);
@@ -91,8 +90,12 @@ public class MyService extends TTSJobService {
 		} else if (POJOMessage.isInComingCallType(object)) {
 			POJOMessage message = (POJOMessage) object;
 			jobs = new Jobs();
-			JobInComingCall job = new JobInComingCall(this, getString(R.string.init_call, message.getValidateName()),  message.getPhoneNumber(), MAX_RETRY);
-			jobs.addJob(job);
+			JobSendSMS jobSendSMS = new JobSendSMS(this, message.getPhoneNumber(), MAX_RETRY);
+			JobSentSMS jobSentSMS = new JobSentSMS();
+			jobSendSMS.addSonJob(JobAnswer.NOT_FOUND, jobSentSMS);
+			JobInComingCall jobInCommingCall = new JobInComingCall(this, message.getValidateName(),  message.getPhoneNumber(), MAX_RETRY);
+			jobInCommingCall.addSonJob(JobAnswer.NEGATIVE_ANSWER, jobSendSMS);
+			jobs.addJob(jobInCommingCall);
 		}
 		return jobs;
 	}
