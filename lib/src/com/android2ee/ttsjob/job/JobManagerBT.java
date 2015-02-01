@@ -38,18 +38,18 @@ public class JobManagerBT extends JobManager {
 	@Override
 	protected void startReconizer() {
 		Log.i("TAG", "startListenning");
-		if (MyPreferences.isMicBT(context)) {
+		/*if (MyPreferences.isMicBT(context)) {
 			// start mic
 			startBtMic();
-		} else {
+		} else {*/
 			super.startReconizer();
-		}
+		//}
 	}
 	
 	/**
 	 * Start Mic BT
 	 */
-	private void startBtMic() {
+	/*private void startBtMic() {
 		// start helper
 		if (helper == null) {
 			helper = new BluetoothHelper(context);
@@ -64,23 +64,23 @@ public class JobManagerBT extends JobManager {
 			}
 		});
 		helper.start();
-	}
+	}*/
 	
 	/**
 	 * Stop mic BT
 	 */
-	private void stopBtMic() {
+	/*private void stopBtMic() {
 		// stop mic
 		if (helper != null) {
 			helper.stop();
 			helper.setOnBlueToothState(null);
 			helper = null;
 		}
-	}
+	}*/
 
 	@Override
 	public void release() {
 		super.release();
-		stopBtMic();
+		//stopBtMic();
 	}
 }

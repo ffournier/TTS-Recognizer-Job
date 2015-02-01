@@ -13,12 +13,12 @@
                 android:dialogTitle="@string/dialog_type_preference"
                 android:defaultValue="4" />
 	</PreferenceCategory>
-	<PreferenceCategory
+	<!-- <PreferenceCategory
             android:title="@string/pref_category_mic_bt">
 		
 	    	<SwitchPreference
                 android:key="mic_bt_preference"
                 android:title="@string/title_mic_bt_preference"
                 android:summary="@string/summary_mic_bt_preference" />
-	</PreferenceCategory>
+	</PreferenceCategory> -->
 </PreferenceScreen>

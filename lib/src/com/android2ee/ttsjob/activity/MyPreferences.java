@@ -31,7 +31,7 @@ public class MyPreferences extends PreferenceFragment implements OnPreferenceCha
 	
 	// variable
 	private ListPreference listPreference;
-	private SwitchPreference switchPreference;
+	//private SwitchPreference switchPreference;
 	protected TTSJobService mService;
 	
 	/**
@@ -61,8 +61,8 @@ public class MyPreferences extends PreferenceFragment implements OnPreferenceCha
         listPreference = (ListPreference) findPreference("type_preference");
         listPreference.setOnPreferenceChangeListener(this);
         
-        switchPreference = (SwitchPreference) findPreference("mic_bt_preference");
-        switchPreference.setOnPreferenceChangeListener(this);
+        /*switchPreference = (SwitchPreference) findPreference("mic_bt_preference");
+        switchPreference.setOnPreferenceChangeListener(this);*/
      }
     
     
@@ -93,10 +93,10 @@ public class MyPreferences extends PreferenceFragment implements OnPreferenceCha
 			if (mService != null) {
 				mService.treatByType(ValueList.fromString((String)newValue));
 				if (ValueList.fromString((String)newValue) != ValueList.HEADSET_BT) {
-					switchPreference.setChecked(false);
-					switchPreference.setEnabled(false);
+					//switchPreference.setChecked(false);
+					//switchPreference.setEnabled(false);
 				} else {
-					switchPreference.setEnabled(true);
+					//switchPreference.setEnabled(true);
 				}
 			}
 		}  
@@ -108,9 +108,9 @@ public class MyPreferences extends PreferenceFragment implements OnPreferenceCha
 	 * @param context
 	 * @return
 	 */
-	public static boolean isMicBT(Context context) {
+	/*public static boolean isMicBT(Context context) {
 		return PreferenceManager.getDefaultSharedPreferences(context).getBoolean("mic_bt_preference", false);
-	}
+	}*/
 	
 	/**
 	 * Get preferences type (All, HeadSetBT, HeadSet, None)
