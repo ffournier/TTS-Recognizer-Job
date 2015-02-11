@@ -20,8 +20,14 @@ public class ToolPref {
 		return valList == ValueList.ALL || valList == ValueList.CALLBACK;
 	}
 	
+	public static boolean treatNotifCalendar(Context context) {
+		String value = PreferenceManager.getDefaultSharedPreferences(context).getString("type_preference_job", ValueList.ALL.getValueString());
+		ValueList valList = ValueList.fromString(value);
+		return valList == ValueList.ALL || valList == ValueList.NOTIF_CALENDAR;
+	}
+	
 	/**
-	 * Enum Class for Type (All, SMS, CALLBACK, None)
+	 * Enum Class for Type (All, SMS, CALLBACK, NOTIF_CALENDAR, None)
 	 * @author florian
 	 *
 	 */
@@ -29,7 +35,8 @@ public class ToolPref {
 		ALL(1),
 		SMS(2),
 		CALLBACK(3),
-		NONE(4);
+		NOTIF_CALENDAR(4),
+		NONE(5);
 		
 		private int value;
 

@@ -11,6 +11,6 @@
                 android:entries="@array/entries_type_job_preference"
                 android:entryValues="@array/entryvalues_type_job_preference"
                 android:dialogTitle="@string/dialog_type_job_preference"
-                android:defaultValue="4" />
+                android:defaultValue="5" />
 	</PreferenceCategory>
 </PreferenceScreen>

@@ -10,6 +10,7 @@ public class POJOMessage extends POJOObject {
 	
 	public static final String KEY_SMS = "treatSMS";
 	public static final String KEY_INCOMINGCALL = "treatCall";
+	public static final String KEY_NOTIF_CALENDAR = "treatNotifCalendar";
 	
 	
 	public POJOMessage(String key, String message, String phoneNumber, String name) {
@@ -41,6 +42,10 @@ public class POJOMessage extends POJOObject {
 	
 	public static boolean isInComingCallType(POJOObject object) {
 		return isType(object, KEY_INCOMINGCALL);
+	}
+	
+	public static boolean isNotifCalendarType(POJOObject object) {
+		return isType(object, KEY_NOTIF_CALENDAR);
 	}
 	
 }

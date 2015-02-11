@@ -20,7 +20,6 @@ import com.android2ee.ttsjob.broadcast.AudioIntentReceiver;
 import com.android2ee.ttsjob.broadcast.TTSJobBroadcast;
 import com.android2ee.ttsjob.job.JobInterface;
 import com.android2ee.ttsjob.job.JobManager;
-import com.android2ee.ttsjob.job.JobManagerBT;
 import com.android2ee.ttsjob.job.Jobs;
 
 /**
@@ -101,11 +100,11 @@ public abstract class TTSJobService extends Service implements JobInterface {
 		
 		treatByType(MyPreferences.getType(this));
 		// start the good manager
-		if (isBluetooth()) {
+		/*if (isBluetooth()) {
 			jobManager = new JobManagerBT(this, isPreferenceLanguage(), getTimeAfterStop());
-		} else {
+		} else {*/
 			jobManager = new JobManager(this, isPreferenceLanguage(), getTimeAfterStop());
-		}
+		//}
 		
 		listenerAudioFocus = new OnAudioFocusChangeListener() {
 			

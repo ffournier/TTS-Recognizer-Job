@@ -4,6 +4,7 @@
         <item>All</item>
         <item>SMS</item>
         <item>CallBack</item>
+        <item>Notification Calendar</item>
         <item>None</item>
     </string-array>
     
@@ -12,6 +13,7 @@
         <item>2</item>
         <item>3</item>
         <item>4</item>
+        <item>5</item>
     </string-array> 
     
 </resources>

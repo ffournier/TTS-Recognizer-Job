@@ -14,6 +14,7 @@ import com.android2ee.ttsjob.service.POJOObject;
 import com.android2ee.ttsjob.service.TTSJobService;
 import com.example.jobvoice.job.JobEndSMS;
 import com.example.jobvoice.job.JobInComingCall;
+import com.example.jobvoice.job.JobReadNotif;
 import com.example.jobvoice.job.JobReadSMS;
 import com.example.jobvoice.job.JobReceiveSMS;
 import com.example.jobvoice.job.JobSendSMS;
@@ -25,7 +26,7 @@ public class MyService extends TTSJobService {
 	
 	public static final String KEY_SMS = "SMS";
 	public static final String KEY_INCOMINGCALL = "INCOMINGCALL";
-	
+	public static final String KEY_NOTIF_CALENDAR = "KEY_NOTIF_CALENDAR";
 	
 	private final static int MAX_RETRY = 2;
 	
@@ -65,6 +66,10 @@ public class MyService extends TTSJobService {
 				String name = getContact(phoneNumber);
 				Log.i(getClass().getCanonicalName(), "getMetaData InComingCall " + phoneNumber + "   " + name);
 				return new POJOMessage(POJOMessage.KEY_INCOMINGCALL, "", phoneNumber, name);
+			} else if (key.equalsIgnoreCase(KEY_NOTIF_CALENDAR)) {
+				String message = bundle.getString(KEY_MESSAGE);
+				Log.i(getClass().getCanonicalName(), "getMetaData NotifCalendar " + message);
+				return new POJOMessage(POJOMessage.KEY_NOTIF_CALENDAR, message, "", "");
 			}
 		}
 		return null;
@@ -96,6 +101,11 @@ public class MyService extends TTSJobService {
 			JobInComingCall jobInCommingCall = new JobInComingCall(this, message.getValidateName(),  message.getPhoneNumber(), MAX_RETRY);
 			jobInCommingCall.addSonJob(JobAnswer.NEGATIVE_ANSWER, jobSendSMS);
 			jobs.addJob(jobInCommingCall);
+		} else if (POJOMessage.isNotifCalendarType(object)) {
+			POJOMessage message = (POJOMessage) object;
+			jobs = new Jobs();
+			JobReadNotif jobReadNotif = new JobReadNotif(this, message.message);
+			jobs.addJob(jobReadNotif);
 		}
 		return jobs;
 	}
