@@ -13,4 +13,6 @@ public class JobAnswer {
 	public static final int EMPTY = 3;
 	public static final int NO_VOICE_RECOGNIZE = 4;
 	
+	public static final int MAX = 4;
+	
 }

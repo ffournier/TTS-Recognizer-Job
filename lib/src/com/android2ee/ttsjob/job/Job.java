@@ -3,6 +3,8 @@ package com.android2ee.ttsjob.job;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import android.speech.tts.TextToSpeech;
@@ -21,6 +23,10 @@ public abstract class Job {
 	// matches 
 	ArrayList<String> matchesPositive;
 	ArrayList<String> matchesNegative;
+	
+	// other matches
+	HashMap<Integer, List<String>> matchesOther;
+	
 	// has recognizer and tts message
 	boolean hasRecognizer;
 	String messageTTS;
@@ -48,6 +54,7 @@ public abstract class Job {
 		this.hasRecognizer = hasRecognizer;
 		this.maxRetry = 0;
 		this.retry = 0;
+		this.matchesOther = new HashMap<>();
 	}
 	
 	/**
@@ -60,6 +67,7 @@ public abstract class Job {
 	public Job(String id, String messageTTS, boolean hasRecognizer, int maxRetry) {
 		this(id, messageTTS, hasRecognizer);
 		this.maxRetry = maxRetry;
+		this.matchesOther = new HashMap<>();
 	}
 	
 	/**
@@ -70,6 +78,19 @@ public abstract class Job {
 	protected void setResults(ArrayList<String> resultsPositive, ArrayList<String> resultsNegative) {
 		matchesPositive = resultsPositive;
 		matchesNegative = resultsNegative;
+	}
+	
+	/**
+	 * Set results possible for this job 
+	 * @param codeResult : code associate to this search
+	 * @param resultsOthers : the list string to search
+	 */
+	protected void addResults(Integer codeResult, ArrayList<String> resultsOthers) throws IllegalArgumentException {
+		
+		if (codeResult >= JobAnswer.EMPTY && codeResult <= JobAnswer.MAX) {
+			throw new IllegalArgumentException("codeResults exists already in JobAnswer");
+		}
+		matchesOther.put(codeResult, resultsOthers);
 	}
 	
 	/**
@@ -124,15 +145,26 @@ public abstract class Job {
 		Integer result = JobAnswer.NOT_FOUND;
 		
 		if (voiceResults != null && voiceResults.size() > 0) {
-			for (String match : voiceResults) {
+			boolean notFound = true;
+			for (int i = 0; i < voiceResults.size() && notFound; i++) {
+				String match = voiceResults.get(i);
 				// TODO maybe evolve search ...
 				if (matchesPositive != null && matchesPositive.contains(match)){
 					result = JobAnswer.POSITIVE_ANSWER;
-					break;
-				}
-				if (matchesNegative != null && matchesNegative.contains(match)){
+					notFound = false;
+				} else if (matchesNegative != null && matchesNegative.contains(match)){
 					result = JobAnswer.NEGATIVE_ANSWER;
-					break;
+					notFound = false;
+				} else if (matchesOther.size() > 0 ) {
+					Iterator<Entry<Integer,List<String>>> it = matchesOther.entrySet().iterator();
+				    while (it.hasNext() && notFound) {
+				        Map.Entry<Integer, List<String>> pair = it.next();
+				        List<String> list = pair.getValue();
+				        if (list != null && list.contains(match)) {
+				        	result = pair.getKey();
+				        	notFound = false;
+				        }
+				    }
 				}
 			}	
 		} else {
@@ -141,6 +173,7 @@ public abstract class Job {
 		
 		return result;
 	}
+	
 	
 	/**
 	 * test if a son Job has this key
