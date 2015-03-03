@@ -12,5 +12,9 @@
                 android:entryValues="@array/entryvalues_type_job_preference"
                 android:dialogTitle="@string/dialog_type_job_preference"
                 android:defaultValue="5" />
+		
+		<Preference android:key="accessibility_preference"
+		    		android:title="Need enable Accessibility Preference for Calendar"/>
+		
 	</PreferenceCategory>
 </PreferenceScreen>

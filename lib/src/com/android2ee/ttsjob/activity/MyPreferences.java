@@ -13,8 +13,10 @@ import android.os.IBinder;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 
 import com.android2ee.ttsjob.R;
 import com.android2ee.ttsjob.service.TTSJobService;
@@ -30,7 +32,11 @@ public class MyPreferences extends PreferenceFragment implements OnPreferenceCha
 	
 	// variable
 	private ListPreference listPreference;
-	//private SwitchPreference switchPreference;
+	/*private SwitchPreference switchPreferenceSecure;
+	private Preference preferenceLanguage;
+	private SwitchPreference switchPreferenceHeadset;*/
+	private Preference recognitionPreference;
+	
 	protected TTSJobService mService;
 	
 	/**
@@ -60,8 +66,39 @@ public class MyPreferences extends PreferenceFragment implements OnPreferenceCha
         listPreference = (ListPreference) findPreference("type_preference");
         listPreference.setOnPreferenceChangeListener(this);
         
-        /*switchPreference = (SwitchPreference) findPreference("mic_bt_preference");
-        switchPreference.setOnPreferenceChangeListener(this);*/
+        recognitionPreference = (Preference) findPreference("recognition_preference");
+        recognitionPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+			
+			@Override
+			public boolean onPreferenceClick(Preference preference) {
+				Intent intent = new Intent();
+				int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+		        if (currentapiVersion >= android.os.Build.VERSION_CODES.LOLLIPOP){
+		        	intent = new Intent(Settings.ACTION_VOICE_INPUT_SETTINGS);
+		        } else {
+		        	intent = new Intent(Settings.ACTION_INPUT_METHOD_SETTINGS);
+		        }
+				startActivity(intent);
+				return false;
+			}
+		});
+        
+        /*switchPreferenceSecure = (SwitchPreference) findPreference("secure_recognition_preference");
+        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+        if (currentapiVersion < android.os.Build.VERSION_CODES.JELLY_BEAN){
+            // Do something for jelly Bean and above versions
+        	switchPreferenceSecure.setEnabled(false);
+        	PreferenceCategory category = (PreferenceCategory) findPreference("recognition_preference");
+        	category.removePreference(switchPreferenceSecure);
+        } else {
+        	switchPreferenceSecure.setOnPreferenceChangeListener(this);
+        }
+        
+        preferenceLanguage = (Preference) findPreference("language_recognition_preference");
+        preferenceLanguage.setOnPreferenceChangeListener(this);
+        
+        switchPreferenceHeadset = (SwitchPreference) findPreference("headset_bt_preference");
+        switchPreferenceHeadset.setOnPreferenceChangeListener(this);*/
      }
     
     
@@ -91,14 +128,24 @@ public class MyPreferences extends PreferenceFragment implements OnPreferenceCha
 			// change headset
 			if (mService != null) {
 				mService.treatByType(ValueList.fromString((String)newValue));
-				if (ValueList.fromString((String)newValue) != ValueList.HEADSET_BT) {
+				//if (ValueList.fromString((String)newValue) != ValueList.HEADSET_BT) {
 					//switchPreference.setChecked(false);
 					//switchPreference.setEnabled(false);
-				} else {
+				//} else {
 					//switchPreference.setEnabled(true);
-				}
+				//}
 			}
-		}  
+		} 
+		/*else if (preference.getKey().equals(switchPreferenceSecure.getKey())) { 
+			boolean isChecked = switchPreferenceSecure.isChecked();
+			
+			
+			
+		} else if (preference.getKey().equals(preferenceLanguage.getKey())) { 
+			
+		} else if (preference.getKey().equals(switchPreferenceHeadset.getKey())) { 
+			
+		}*/
 		return true;
 	}
 	

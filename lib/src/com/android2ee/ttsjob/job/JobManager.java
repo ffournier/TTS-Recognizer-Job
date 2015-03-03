@@ -42,8 +42,8 @@ public class JobManager implements RecognitionListener {
 	
 	JobInterface jInterface;
 	
-	Boolean isPreferenceLanguage;
-	Long timeAfterStop;
+	// Boolean isPreferenceLanguage;
+	// Long timeAfterStop;
 	
 	volatile boolean hasTreat;
 	
@@ -59,8 +59,8 @@ public class JobManager implements RecognitionListener {
 		this.jobs  = new Jobs();
 		initTextToSpeech();
 		initRecognizer();
-		isPreferenceLanguage = null;
-		timeAfterStop = null;
+		//isPreferenceLanguage = null;
+		//timeAfterStop = null;
 		hasTreat = false;
 		recognizerStarted = false;
 		isOnPause = false;
@@ -72,14 +72,14 @@ public class JobManager implements RecognitionListener {
 	 * @param pref
 	 * @param time
 	 */
-	public JobManager(Context context, Boolean pref, Long time) {
+	/*public JobManager(Context context, Boolean pref, Long time) {
 		this(context);
-		isPreferenceLanguage = pref;
-		timeAfterStop = time;
+		//isPreferenceLanguage = pref;
+		//timeAfterStop = time;
 		hasTreat = true;
 		recognizerStarted = false;
 		isOnPause = false;
-	}
+	}*/
 	
 	
 	
@@ -91,19 +91,26 @@ public class JobManager implements RecognitionListener {
 	 * init recognizer
 	 */
 	private void initRecognizer() {
+		Intent voiceDetails = RecognizerIntent.getVoiceDetailsIntent(context);
+		
 		intentRecognizer = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 		intentRecognizer.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
             RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
 		intentRecognizer.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
             "com.android2ee.ttsjob");
-		//intentRecognizer.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
-		if (isPreferenceLanguage != null) {
+		
+		String language = voiceDetails.getStringExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE);
+        intentRecognizer.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, language
+				);
+        
+        //intentRecognizer.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
+		/*if (isPreferenceLanguage != null) {
 			intentRecognizer.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, isPreferenceLanguage);
 		}
 		if (timeAfterStop != null) {
 			intentRecognizer.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, timeAfterStop);
 			intentRecognizer.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, timeAfterStop);
-		}
+		}*/
 		recognizer = SpeechRecognizer
             .createSpeechRecognizer(context);
 		recognizer.setRecognitionListener(this);

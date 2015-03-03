@@ -7,8 +7,15 @@
     <string name="title_type_preference">Audio Out</string>
     <string name="summary_type_preference">Choose the type of Audio Out</string>
     <string name="dialog_type_preference">Dialog Audio</string>
-    <string name="pref_category_mic_bt">Category Mic BT</string>
-    <string name="title_mic_bt_preference">Title Mic BT</string>
-    <string name="summary_mic_bt_preference">Summary mic BT</string>
+    <string name="pref_category_recognition_bt">Category Recognition BT</string>
+    <string name="title_headset_bt_preference">Title Mic BT</string>
+    <string name="summary_headset_bt_preference">Summary mic BT</string>
+    
+    <string name="pref_category_recognition">Recognition</string>
+    <string name="pref_recognition">Recognition Settings</string>
+    <string name="title_secure_recognition_preference">Title Secure Voice</string>
+    <string name="summary_secure_recognition_preference">Summary Secure Voice</string>
+    <string name="title_language_recognition_preference">Title Language Voice</string>
+    <string name="summary_language_recognition_preference">Summary Language Voice</string>
     
 </resources>

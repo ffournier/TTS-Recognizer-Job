@@ -103,7 +103,7 @@ public abstract class TTSJobService extends Service implements JobInterface {
 		/*if (isBluetooth()) {
 			jobManager = new JobManagerBT(this, isPreferenceLanguage(), getTimeAfterStop());
 		} else {*/
-			jobManager = new JobManager(this, isPreferenceLanguage(), getTimeAfterStop());
+			jobManager = new JobManager(this/*, isPreferenceLanguage(), getTimeAfterStop()*/);
 		//}
 		
 		listenerAudioFocus = new OnAudioFocusChangeListener() {
@@ -160,8 +160,8 @@ public abstract class TTSJobService extends Service implements JobInterface {
 	// method abstract
 	protected abstract boolean isBluetooth();
 	protected abstract POJOObject getMetaData(Bundle bundle);
-	protected abstract Boolean isPreferenceLanguage();
-	protected abstract Long getTimeAfterStop();
+	//protected abstract Boolean isPreferenceLanguage();
+	//protected abstract Long getTimeAfterStop();
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) 

@@ -1,5 +1,6 @@
 package com.example.jobvoice;
 
+import java.security.acl.NotOwnerException;
 import java.util.List;
 
 import android.accessibilityservice.AccessibilityService;
@@ -25,9 +26,11 @@ public class NotificationServiceListener extends AccessibilityService {
         			service.putExtra(MyService.KEY_NAME, MyService.KEY_NOTIF_CALENDAR);
         			// TODO to test
         			List<CharSequence> notificationList = event.getText();
-        			service.putExtra(MyService.KEY_MESSAGE, notificationList.get(0));
-        			this.startService(service); 
-        			Log.i(getClass().getCanonicalName(), "Start Service Calendar");
+        			if (notificationList != null && notificationList.size() > 0) {
+	        			service.putExtra(MyService.KEY_MESSAGE, notificationList.get(0));
+	        			this.startService(service); 
+	        			Log.i(getClass().getCanonicalName(), "Start Service Calendar");
+        			}
         		}
             }
 	    }

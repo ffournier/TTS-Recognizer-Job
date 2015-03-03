@@ -13,12 +13,35 @@
                 android:dialogTitle="@string/dialog_type_preference"
                 android:defaultValue="4" />
 	</PreferenceCategory>
+	
+	<PreferenceCategory
+	    	android:title="@string/pref_category_recognition">
+		
+	       <Preference
+	           android:key="recognition_preference"
+            	android:title="@string/pref_recognition"
+            	android:enabled="true"/>
+		
+			<!--  <SwitchPreference
+                android:key="secure_recognition_preference"
+                android:title="@string/title_secure_recognition_preference"
+                android:summary="@string/summary_secure_recognition_preference" />
+			
+	    	<Preference
+                android:key="language_recognition_preference"
+                android:title="@string/title_language_recognition_preference"
+                android:summary="@string/summary_language_recognition_preference" />-->
+	    	
+	</PreferenceCategory>
+	
 	<!-- <PreferenceCategory
-            android:title="@string/pref_category_mic_bt">
+            android:title="@string/pref_category_recognition_bt">
 		
 	    	<SwitchPreference
-                android:key="mic_bt_preference"
-                android:title="@string/title_mic_bt_preference"
-                android:summary="@string/summary_mic_bt_preference" />
+                android:key="headset_bt_preference"
+                android:title="@string/title_headset_bt_preference"
+                android:summary="@string/summary_headset_bt_preference" />
+	    	
+	    	
 	</PreferenceCategory> -->
 </PreferenceScreen>

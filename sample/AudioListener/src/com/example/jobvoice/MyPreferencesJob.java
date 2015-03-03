@@ -1,9 +1,11 @@
 package com.example.jobvoice;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
-
-import com.example.jobvoice.R;
+import android.provider.Settings;
 
 /**
  * Class Preference
@@ -13,6 +15,7 @@ import com.example.jobvoice.R;
  */
 public class MyPreferencesJob extends PreferenceFragment {
 	
+	Preference accessibilityPreference;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -20,6 +23,18 @@ public class MyPreferencesJob extends PreferenceFragment {
 		
 		// Load the preferences from an XML resource
 		addPreferencesFromResource(R.xml.preferencesjob);
+		
+		accessibilityPreference = (Preference) findPreference("accessibility_preference");
+		accessibilityPreference.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+			
+			@Override
+			public boolean onPreferenceClick(Preference preference) {
+				Intent intent = new Intent();
+				intent.setAction(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+				startActivity(intent);
+				return false;
+			}
+		});
 		
 	}
     

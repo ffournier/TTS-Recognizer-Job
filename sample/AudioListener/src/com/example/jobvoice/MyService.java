@@ -115,14 +115,4 @@ public class MyService extends TTSJobService {
 		return true;
 	}
 
-	@Override
-	protected Boolean isPreferenceLanguage() {
-		return null;
-	}
-
-	@Override
-	protected Long getTimeAfterStop() {
-		return (long) (15 * 1000);
-	}
-
 }
