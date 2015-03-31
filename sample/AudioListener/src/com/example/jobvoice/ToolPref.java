@@ -40,7 +40,7 @@ public class ToolPref {
 	}
 	
 	public static int getRetry(Context context) {
-		return PreferenceManager.getDefaultSharedPreferences(context).getInt("retry_preference_job", 2);
+		return Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("retry_preference_job", "2"));
 	}
 	
 	/**
