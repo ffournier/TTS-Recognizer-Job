@@ -2,7 +2,9 @@ package com.example.jobvoice;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.provider.Settings;
@@ -16,6 +18,7 @@ import android.provider.Settings;
 public class MyPreferencesJob extends PreferenceFragment {
 	
 	Preference accessibilityPreference;
+	EditTextPreference retryPreference;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,6 +39,18 @@ public class MyPreferencesJob extends PreferenceFragment {
 			}
 		});
 		
+		retryPreference = (EditTextPreference) findPreference("retry_preference_job");
+		retryPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+			
+			@Override
+			public boolean onPreferenceChange(Preference preference, Object newValue) {
+				Integer value = (Integer) Integer.parseInt((String) newValue);
+				if (value == null || value < 0) {
+					newValue = 3;
+				}
+				return true;
+			}
+		});
 	}
     
 }

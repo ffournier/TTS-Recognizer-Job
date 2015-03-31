@@ -28,7 +28,7 @@ public class MyService extends TTSJobService {
 	public static final String KEY_INCOMINGCALL = "INCOMINGCALL";
 	public static final String KEY_NOTIF_CALENDAR = "KEY_NOTIF_CALENDAR";
 	
-	private final static int MAX_RETRY = 2;
+	//private final static int MAX_RETRY = 2;
 	
 	private String getContact(String phoneNumber) {
 		Log.i(getClass().getCanonicalName(), "getContact");
@@ -82,9 +82,9 @@ public class MyService extends TTSJobService {
 		if (POJOMessage.isSMSType(object)) {
 			POJOMessage message = (POJOMessage) object;
 			jobs = new Jobs();
-			JobReceiveSMS jobReceiveSMS = new JobReceiveSMS(this, message.getValidateName(), MAX_RETRY);
-			JobReadSMS jobReadSMS = new JobReadSMS(this, message.getMessage(),message.getValidateName(), MAX_RETRY);
-			JobSendSMS jobSendSMS = new JobSendSMS(this, message.getPhoneNumber(), MAX_RETRY);
+			JobReceiveSMS jobReceiveSMS = new JobReceiveSMS(this, message.getValidateName(), ToolPref.getRetry(this));
+			JobReadSMS jobReadSMS = new JobReadSMS(this, message.getMessage(),message.getValidateName(), ToolPref.getRetry(this));
+			JobSendSMS jobSendSMS = new JobSendSMS(this, message.getPhoneNumber(), ToolPref.getRetry(this));
 			JobSentSMS jobSentSMS = new JobSentSMS();
 			jobSendSMS.addSonJob(JobAnswer.NOT_FOUND, jobSentSMS);
 			jobReadSMS.addSonJob(JobAnswer.POSITIVE_ANSWER, jobSendSMS);
@@ -95,10 +95,10 @@ public class MyService extends TTSJobService {
 		} else if (POJOMessage.isInComingCallType(object)) {
 			POJOMessage message = (POJOMessage) object;
 			jobs = new Jobs();
-			JobSendSMS jobSendSMS = new JobSendSMS(this, message.getPhoneNumber(), MAX_RETRY);
+			JobSendSMS jobSendSMS = new JobSendSMS(this, message.getPhoneNumber(), ToolPref.getRetry(this));
 			JobSentSMS jobSentSMS = new JobSentSMS();
 			jobSendSMS.addSonJob(JobAnswer.NOT_FOUND, jobSentSMS);
-			JobInComingCall jobInCommingCall = new JobInComingCall(this, message.getValidateName(),  message.getPhoneNumber(), MAX_RETRY);
+			JobInComingCall jobInCommingCall = new JobInComingCall(this, message.getValidateName(),  message.getPhoneNumber(), ToolPref.getRetry(this));
 			jobInCommingCall.addSonJob(JobAnswer.NEGATIVE_ANSWER, jobSendSMS);
 			jobs.addJob(jobInCommingCall);
 		} else if (POJOMessage.isNotifCalendarType(object)) {

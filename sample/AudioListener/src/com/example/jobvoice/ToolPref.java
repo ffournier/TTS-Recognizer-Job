@@ -26,6 +26,10 @@ public class ToolPref {
 		return valList == ValueList.ALL || valList == ValueList.NOTIF_CALENDAR;
 	}
 	
+	public static int getRetry(Context context) {
+		return PreferenceManager.getDefaultSharedPreferences(context).getInt("retry_preference_job", 2);
+	}
+	
 	/**
 	 * Enum Class for Type (All, SMS, CALLBACK, NOTIF_CALENDAR, None)
 	 * @author florian

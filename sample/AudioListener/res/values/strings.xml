@@ -37,4 +37,10 @@
     
     <string name="dialog_type_job_preference">Dialog Jobs</string>
     
+    <string name="title_retry_job_preference">Retry Jobs</string>
+    
+    <string name="summary_retry_job_preference">Retry Jobs</string>
+    
+    <string name="dialog_retry_job_preference">Dialog Retry Jobs</string>
+    
 </resources>
