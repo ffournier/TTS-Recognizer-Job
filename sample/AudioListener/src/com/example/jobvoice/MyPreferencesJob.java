@@ -1,5 +1,7 @@
 package com.example.jobvoice;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -51,6 +53,22 @@ public class MyPreferencesJob extends PreferenceFragment {
 				return true;
 			}
 		});
+	}
+
+	@Override
+	public void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		
+		Intent intent = new Intent(getActivity(), AppWidget.class);
+		intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+		// Use an array and EXTRA_APPWIDGET_IDS instead of AppWidgetManager.EXTRA_APPWIDGET_ID,
+		// since it seems the onUpdate() is only fired on that:
+		//int[] ids = {widgetId};
+		int ids[] = AppWidgetManager.getInstance(getActivity().getApplication()).getAppWidgetIds(new ComponentName(getActivity().getApplication(),
+				AppWidget.class));
+		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+		getActivity().sendBroadcast(intent);
 	}
     
 }

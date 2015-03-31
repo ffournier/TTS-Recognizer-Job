@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@android:color/background_dark" >
+    
+	<ImageView android:id="@+id/all_widget"
+   		 android:layout_height="wrap_content"
+   		 android:layout_width="0dp"
+   		 android:layout_weight="1"
+   		 android:layout_gravity="center"
+   		 android:padding="10dip"
+   		 android:src="@android:drawable/ic_menu_agenda"/>
+	
+	<ImageView android:id="@+id/sms_widget"
+   		 android:layout_height="wrap_content"
+   		 android:layout_width="0dp"
+   		 android:layout_weight="1"
+   		 android:layout_gravity="center"
+   		 android:padding="10dip"
+   		 android:src="@android:drawable/ic_dialog_email"/>
+	
+	<ImageView android:id="@+id/callback_widget"
+   		 android:layout_height="wrap_content"
+   		 android:layout_width="0dp"
+   		 android:layout_weight="1"
+   		 android:layout_gravity="center"
+   		 android:padding="10dip"
+   		 android:src="@android:drawable/ic_menu_call"/>
+	
+	<ImageView android:id="@+id/calendar_widget"
+   		 android:layout_height="wrap_content"
+   		 android:layout_width="0dp"
+   		 android:layout_weight="1"
+   		 android:layout_gravity="center"
+   		 android:padding="10dip"
+   		 android:src="@android:drawable/ic_menu_my_calendar"/>
+		
+</LinearLayout>

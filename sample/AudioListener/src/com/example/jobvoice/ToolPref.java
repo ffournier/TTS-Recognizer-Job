@@ -4,9 +4,22 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.content.Context;
+import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 
 public class ToolPref {
+	
+	public static ValueList getType(Context context) {
+		String value = PreferenceManager.getDefaultSharedPreferences(context).getString("type_preference_job", ValueList.ALL.getValueString());
+		ValueList valList = ValueList.fromString(value);
+		return valList;
+	}
+	
+	public static void setType(Context context, ValueList list) {
+		Editor edit = PreferenceManager.getDefaultSharedPreferences(context).edit();
+		edit.putString("type_preference_job", list.getValueString());
+		edit.commit();
+	}
 
 	public static boolean treatSMS(Context context) {
 		String value = PreferenceManager.getDefaultSharedPreferences(context).getString("type_preference_job", ValueList.ALL.getValueString());
