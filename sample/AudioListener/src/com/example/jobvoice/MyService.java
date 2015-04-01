@@ -13,6 +13,7 @@ import com.android2ee.ttsjob.job.Jobs;
 import com.android2ee.ttsjob.service.POJOObject;
 import com.android2ee.ttsjob.service.TTSJobService;
 import com.example.jobvoice.job.JobEndSMS;
+import com.example.jobvoice.job.JobFuckSMS;
 import com.example.jobvoice.job.JobInComingCall;
 import com.example.jobvoice.job.JobReadNotif;
 import com.example.jobvoice.job.JobReadSMS;
@@ -74,7 +75,7 @@ public class MyService extends TTSJobService {
 		}
 		return null;
 	}
-
+	
 	@Override
 	protected Jobs addJobs(POJOObject object) {
 		Log.i(getClass().getCanonicalName(), "addJobs");
@@ -86,9 +87,11 @@ public class MyService extends TTSJobService {
 			JobReadSMS jobReadSMS = new JobReadSMS(this, message.getMessage(),message.getValidateName(), ToolPref.getRetry(this));
 			JobSendSMS jobSendSMS = new JobSendSMS(this, message.getPhoneNumber(), ToolPref.getRetry(this));
 			JobSentSMS jobSentSMS = new JobSentSMS();
+			JobFuckSMS jobFuckSMS = new JobFuckSMS();
 			jobSendSMS.addSonJob(JobAnswer.NOT_FOUND, jobSentSMS);
 			jobReadSMS.addSonJob(JobAnswer.POSITIVE_ANSWER, jobSendSMS);
 			jobReceiveSMS.addSonJob(JobAnswer.POSITIVE_ANSWER, jobReadSMS);
+			jobReceiveSMS.addSonJob(JobReceiveSMS.FUCK_ANSWER, jobFuckSMS);
 			jobs.addJob(jobReceiveSMS);
 			JobEndSMS jobEnd = new JobEndSMS(this);
 			jobs.addJob(jobEnd);

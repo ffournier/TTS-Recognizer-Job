@@ -21,6 +21,8 @@
 	
 	<string name="no">non</string>
 	
+	<string name="shut_up">ta gueule</string>
+	
 	<string name="init_call">Voulez vous rappeler ou envoyer un message à %1$s ?</string>
 	
 	<string name="callback">rappeler</string>
