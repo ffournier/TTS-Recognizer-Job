@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="entries_type_job_preference">
+        <item>Todos</item>
+        <item>SMS</item>
+        <item>llamar de vuelta</item>
+        <item>Notificación Calendario</item>
+        <item>No</item>
+    </string-array>
+    
+    <string-array name="entryvalues_type_job_preference">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array> 
+    
+</resources>

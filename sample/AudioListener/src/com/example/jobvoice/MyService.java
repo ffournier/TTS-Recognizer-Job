@@ -87,7 +87,7 @@ public class MyService extends TTSJobService {
 			JobReadSMS jobReadSMS = new JobReadSMS(this, message.getMessage(),message.getValidateName(), ToolPref.getRetry(this));
 			JobSendSMS jobSendSMS = new JobSendSMS(this, message.getPhoneNumber(), ToolPref.getRetry(this));
 			JobSentSMS jobSentSMS = new JobSentSMS();
-			JobFuckSMS jobFuckSMS = new JobFuckSMS();
+			JobFuckSMS jobFuckSMS = new JobFuckSMS(this);
 			jobSendSMS.addSonJob(JobAnswer.NOT_FOUND, jobSentSMS);
 			jobReadSMS.addSonJob(JobAnswer.POSITIVE_ANSWER, jobSendSMS);
 			jobReceiveSMS.addSonJob(JobAnswer.POSITIVE_ANSWER, jobReadSMS);

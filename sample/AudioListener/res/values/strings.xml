@@ -3,39 +3,41 @@
 
     <string name="app_name">JobVoice</string>
     
-	<string name="info_name">Vous avez reçu un message de %1$s. Voulez vous que je lise ce message ?</string>
+	<string name="info_name">You have received a message from %1$s. Do you want that I read this message ?</string>
 	
-	<string name="send_message">%1$s . Voulez vous envoyer un message à %2$s ?</string>
+	<string name="send_message">%1$s . Do you want send a message to %2$s ?</string>
 	
-	<string name="end_message">Opération terminée. merci !</string>
+	<string name="end_message">Operation successful. Thanks !</string>
 	
-	<string name="say_message">Annoncez le message ?</string>
+	<string name="say_message">Announce the message ?</string>
 	
-	<string name="sent_message"> %1$s . Message envoyé</string>
+	<string name="sent_message"> %1$s . Message sent</string>
 	
-	<string name="sent_no_message"> Message non envoyé</string>
+	<string name="sent_no_message">Message no sent</string>
 	
-	<string name="yes">oui</string>
+	<string name="yes">yes</string>
 	
-	<string name="yes2">ouais</string>
+	<string name="yes2">yea</string>
 	
-	<string name="no">non</string>
+	<string name="no">no</string>
 	
-	<string name="shut_up">ta gueule</string>
+	<string name="shut_up">Shut up</string>
 	
-	<string name="init_call">Voulez vous rappeler ou envoyer un message à %1$s ?</string>
+	<string name="shutup_yourself">Shut up yourself</string>
 	
-	<string name="callback">rappeler</string>
+	<string name="init_call">Do you want call back or send a message to %1$s ?</string>
 	
-	<string name="message">envoyer un message</string>
+	<string name="callback">Call Back</string>
+	
+	<string name="message">Send a message</string>
 	
 	<string name="message2">message</string>
 	
 	<string name="pref_category_type_job">Job</string>
     
-    <string name="title_type_job_preference">Job Works</string>
+    <string name="title_type_job_preference">Settings Jobs</string>
     
-    <string name="summary_type_job_preference">Choose your jobs works</string>
+    <string name="summary_type_job_preference">Choose your Jobs</string>
     
     <string name="dialog_type_job_preference">Dialog Jobs</string>
     
@@ -43,6 +45,6 @@
     
     <string name="summary_retry_job_preference">Retry Jobs</string>
     
-    <string name="dialog_retry_job_preference">Dialog Retry Jobs</string>
+    <string name="dialog_retry_job_preference">Dialog retry Jobs</string>
     
 </resources>

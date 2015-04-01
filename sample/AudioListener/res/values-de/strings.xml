@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">JobVoice</string>
+    
+	<string name="info_name">Sie haben eine Nachricht erhalten %1$s. Soll ich diese Nachricht lesen wollen ?</string>
+	
+	<string name="send_message">%1$s . Sie möchten eine Nachricht zu senden %2$s ?</string>
+	
+	<string name="end_message">Betrieb beendet. Danke !</string>
+	
+	<string name="say_message">Werbung Nachricht ?</string>
+	
+	<string name="sent_message"> %1$s . Nachricht wurde gesendet</string>
+	
+	<string name="sent_no_message">Noch nicht gesendeten Nachricht</string>
+	
+	<string name="yes">Ya</string>
+	
+	<string name="yes2">Yeah</string>
+	
+	<string name="no">Nein</string>
+	
+	<string name="shut_up">ta gueule</string>
+	
+	<string name="shutup_yourself">Ta gueule toi même</string>
+	
+	<string name="init_call">Haben Sie daran zu erinnern, oder eine Nachricht zu wollen %1$s ?</string>
+	
+	<string name="callback">Zurückrufen</string>
+	
+	<string name="message">Senden Sie eine Nachricht</string>
+	
+	<string name="message2">Nachricht</string>
+	
+	<string name="pref_category_type_job">Job</string>
+    
+    <string name="title_type_job_preference">Parameter Jobs</string>
+    
+    <string name="summary_type_job_preference">Wahl der jobs</string>
+    
+    <string name="dialog_type_job_preference">Dialog Jobs</string>
+    
+    <string name="title_retry_job_preference">Wiederholen Jobs</string>
+    
+    <string name="summary_retry_job_preference">Wiederholen Jobs</string>
+    
+    <string name="dialog_retry_job_preference">Dialog wiederholen Jobs</string>
+    
+</resources>
