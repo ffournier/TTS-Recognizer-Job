@@ -98,8 +98,12 @@ public class JobManager implements RecognitionListener {
             RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
 		intentRecognizer.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
             "com.android2ee.ttsjob");
-		
-		String language = voiceDetails.getStringExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE);
+		String language;
+		if (voiceDetails != null) {
+			language = voiceDetails.getStringExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE);
+		} else {
+			language = Locale.getDefault().getLanguage();
+		}
         intentRecognizer.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, language
 				);
         
