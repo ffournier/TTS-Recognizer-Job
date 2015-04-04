@@ -5,36 +5,87 @@
     android:orientation="horizontal"
     android:background="@android:color/background_dark" >
     
-	<ImageView android:id="@+id/all_widget"
-   		 android:layout_height="wrap_content"
+    <LinearLayout android:layout_height="match_parent"
    		 android:layout_width="0dp"
    		 android:layout_weight="1"
-   		 android:layout_gravity="center"
-   		 android:padding="10dip"
-   		 android:src="@android:drawable/ic_menu_agenda"/>
+   		 android:orientation="vertical"
+   		 android:weightSum="1">
+		<ImageView android:id="@+id/all_widget"
+	   		 android:layout_height="0dp"
+	   		 android:layout_width="match_parent"
+	   		 android:layout_weight=".95"
+	   		 android:layout_gravity="center"
+	   		 android:padding="10dp"
+	   		 android:scaleType="center"
+	   		 android:src="@android:drawable/ic_menu_agenda"/>
+		<ImageView 
+		     android:id="@+id/all_widget_view"
+		     android:layout_height="0dp"
+	   		 android:layout_width="match_parent"
+	   		 android:layout_weight=".05"/>
+	</LinearLayout>
 	
-	<ImageView android:id="@+id/sms_widget"
-   		 android:layout_height="wrap_content"
+    <LinearLayout android:layout_height="match_parent"
    		 android:layout_width="0dp"
    		 android:layout_weight="1"
-   		 android:layout_gravity="center"
-   		 android:padding="10dip"
-   		 android:src="@android:drawable/ic_dialog_email"/>
+   		 android:orientation="vertical"
+   		 android:weightSum="1">
+		<ImageView android:id="@+id/sms_widget"
+	   		 android:layout_height="0dp"
+	   		 android:layout_width="match_parent"
+	   		 android:layout_weight=".95"
+	   		 android:layout_gravity="center"
+	   		 android:padding="10dp"
+	   		 android:scaleType="center"
+	   		 android:src="@android:drawable/ic_dialog_email"/>
+		<ImageView 
+		     android:id="@+id/sms_widget_view"
+		     android:layout_height="0dp"
+	   		 android:layout_width="match_parent"
+	   		 android:layout_weight=".05"/>
+	</LinearLayout>
 	
-	<ImageView android:id="@+id/callback_widget"
-   		 android:layout_height="wrap_content"
+	<LinearLayout android:layout_height="match_parent"
    		 android:layout_width="0dp"
    		 android:layout_weight="1"
-   		 android:layout_gravity="center"
-   		 android:padding="10dip"
-   		 android:src="@android:drawable/ic_menu_call"/>
-	
-	<ImageView android:id="@+id/calendar_widget"
-   		 android:layout_height="wrap_content"
-   		 android:layout_width="0dp"
-   		 android:layout_weight="1"
-   		 android:layout_gravity="center"
-   		 android:padding="10dip"
-   		 android:src="@android:drawable/ic_menu_my_calendar"/>
+   		 android:orientation="vertical"
+   		 android:weightSum="1">
 		
+		<ImageView android:id="@+id/callback_widget"
+	   		 android:layout_height="0dp"
+	   		 android:layout_width="match_parent"
+	   		 android:layout_weight=".95"
+	   		 android:layout_gravity="center"
+	   		 android:padding="10dp"
+	   		 android:scaleType="center"
+	   		 android:src="@android:drawable/ic_menu_call"/>
+		<ImageView 
+		     android:id="@+id/callback_widget_view"
+		     android:layout_height="0dp"
+	   		 android:layout_width="match_parent"
+	   		 android:layout_weight=".05"/>
+	</LinearLayout>
+	
+	<LinearLayout android:layout_height="match_parent"
+   		 android:layout_width="0dp"
+   		 android:layout_weight="1"
+   		 android:orientation="vertical"
+   		 android:weightSum="1">
+		
+		<ImageView android:id="@+id/calendar_widget"
+	   		 android:layout_height="0dp"
+	   		 android:layout_width="match_parent"
+	   		 android:layout_weight=".95"
+	   		 android:layout_gravity="center"
+	   		 android:padding="10dp"
+	   		 android:scaleType="center"
+	   		 android:src="@android:drawable/ic_menu_my_calendar"/>
+		
+		<ImageView 
+		     android:id="@+id/calendar_widget_view"
+		     android:layout_height="0dp"
+		     android:layout_width="match_parent"
+	   		 android:layout_weight=".05"/>
+	</LinearLayout>
+	
 </LinearLayout>

@@ -36,7 +36,7 @@ public class AppWidget extends AppWidgetProvider {
 		
 	}
 	
-	//private static final String ColorSelected = "#FF7F00";
+	private static final String ColorSelected = "#80B0FB";
 	
 	/**
      * Update the widget
@@ -50,10 +50,16 @@ public class AppWidget extends AppWidgetProvider {
         // Prepare widget views
     	ValueList list = ToolPref.getType(context);
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
-        views.setInt(R.id.all_widget, "setBackgroundColor", list == ValueList.ALL ? Color.DKGRAY : Color.TRANSPARENT);
-        views.setInt(R.id.sms_widget, "setBackgroundColor", list == ValueList.SMS ? Color.DKGRAY : Color.TRANSPARENT);
-        views.setInt(R.id.callback_widget, "setBackgroundColor", list == ValueList.CALLBACK ? Color.DKGRAY : Color.TRANSPARENT);
-        views.setInt(R.id.calendar_widget, "setBackgroundColor", list == ValueList.NOTIF_CALENDAR ? Color.DKGRAY : Color.TRANSPARENT);
+        
+        views.setInt(R.id.all_widget, "setBackgroundColor", list == ValueList.ALL ? Color.GRAY : Color.TRANSPARENT);
+        views.setInt(R.id.sms_widget, "setBackgroundColor", list == ValueList.SMS ? Color.GRAY : Color.TRANSPARENT);
+        views.setInt(R.id.callback_widget, "setBackgroundColor", list == ValueList.CALLBACK ? Color.GRAY : Color.TRANSPARENT);
+        views.setInt(R.id.calendar_widget, "setBackgroundColor", list == ValueList.NOTIF_CALENDAR ? Color.GRAY : Color.TRANSPARENT);
+        
+        views.setInt(R.id.all_widget_view, "setBackgroundColor", list == ValueList.ALL ? Color.parseColor(ColorSelected) : Color.TRANSPARENT);
+        views.setInt(R.id.sms_widget_view, "setBackgroundColor", list == ValueList.SMS ? Color.parseColor(ColorSelected) : Color.TRANSPARENT);
+        views.setInt(R.id.callback_widget_view, "setBackgroundColor", list == ValueList.CALLBACK ? Color.parseColor(ColorSelected) : Color.TRANSPARENT);
+        views.setInt(R.id.calendar_widget_view, "setBackgroundColor", list == ValueList.NOTIF_CALENDAR ? Color.parseColor(ColorSelected) : Color.TRANSPARENT);
         
         
         views.setOnClickPendingIntent(R.id.all_widget, getPendingSelfIntent(context, ALL_CLICK, appWidgetId));
