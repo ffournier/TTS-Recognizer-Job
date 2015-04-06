@@ -88,6 +88,15 @@ public abstract class TTSJobService extends Service implements JobInterface {
 		}
 	};
 	
+	private Runnable myAttemptsNew = new Runnable() {
+		
+		@Override
+		public void run() {
+			// we requets now the focus init
+			newMessageInQueue();
+		}
+	};
+	
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -204,9 +213,9 @@ public abstract class TTSJobService extends Service implements JobInterface {
 			Log.i(getClass().getCanonicalName(), "newMessageInQueue isOnPause " + isOnPause);
 			if (!isOnPause) {
 				if(state == StateMessage.IS_NOT_RUNNING) {
-				// start
+					// start
 				
-				Jobs jobs = addJobs(myQueueMessage.get(0));
+					Jobs jobs = addJobs(myQueueMessage.get(0));
 					if (jobs != null) {
 						if (jobManager.startJobs(jobs, this)) {
 							state = StateMessage.IS_RUNNING;
@@ -216,7 +225,17 @@ public abstract class TTSJobService extends Service implements JobInterface {
 				} else {
 					resumeSystem();
 				}
-			} 
+			} else {
+				if(state == StateMessage.IS_NOT_RUNNING) {
+					// test later
+					if (mHandler == null) {
+						mHandler = new Handler();
+					} else {
+						mHandler.removeCallbacks(myAttemptsNew);
+					}
+					mHandler.postDelayed(myAttemptsNew, 5* 1000);
+				}
+			}
 		} else {
 			// stop Service
 			release();
