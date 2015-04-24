@@ -51,6 +51,9 @@ public abstract class TTSJobService extends Service implements JobInterface {
 	
 	Handler mHandler;
 	
+	// silly, we must pass by a broadcast but i don't know how i do it
+	int laterJobsCount;
+	
 	private enum StateMessage {
 		IS_RUNNING,
 		IS_NOT_RUNNING
@@ -102,7 +105,7 @@ public abstract class TTSJobService extends Service implements JobInterface {
 		super.onCreate();
 		
 		state = StateMessage.IS_NOT_RUNNING;
-		
+		laterJobsCount = 0;
 		mHandler = null;
 		
 		Log.i(getClass().getCanonicalName(), "TTSJobService onCreate");
@@ -214,8 +217,12 @@ public abstract class TTSJobService extends Service implements JobInterface {
 			if (!isOnPause) {
 				if(state == StateMessage.IS_NOT_RUNNING) {
 					// start
-				
-					Jobs jobs = addJobs(myQueueMessage.get(0));
+					Jobs jobs;
+					if (myQueueMessage.get(0).hasJob()) {
+						jobs = myQueueMessage.get(0).getJobs();
+					} else {
+						jobs = addJobs(myQueueMessage.get(0));
+					}
 					if (jobs != null) {
 						if (jobManager.startJobs(jobs, this)) {
 							state = StateMessage.IS_RUNNING;
@@ -237,9 +244,13 @@ public abstract class TTSJobService extends Service implements JobInterface {
 				}
 			}
 		} else {
-			// stop Service
-			release();
-			stopSelf();
+			
+			// need to now if we have a runnable later which runs
+			if (laterJobsCount <= 0) {
+				// stop Service
+				release();
+				stopSelf();
+			}
 		}
 	}
 	
@@ -350,7 +361,7 @@ public abstract class TTSJobService extends Service implements JobInterface {
 		stopAudio();
 		
 		if (mHandler != null) {
-			mHandler.removeCallbacks(myAttempts);
+			mHandler.removeCallbacksAndMessages(null);
 		}
 		super.onDestroy();
 	}
@@ -365,5 +376,41 @@ public abstract class TTSJobService extends Service implements JobInterface {
 		// test now if we have a new Message in pending
 		newMessageInQueue();
 	}
+	
+	@Override
+	public void reportJobs(Jobs jobs, long timer) {
+		// remove current POJOOBject
+		Log.i(getClass().getCanonicalName(), "TTSJobService End Jobs");
+		deleteProgressMessage();
+		state = StateMessage.IS_NOT_RUNNING;
+		stopAudio();
+		// start scheduler
+		
+		laterJobsCount++; 
+		mHandler.postDelayed(new ReportRunnable(jobs), timer);
+		// test now if we have a new Message in pending
+		newMessageInQueue();
+	}
 
+	public class ReportRunnable implements Runnable {
+		
+		private Jobs jobs;
+
+		public ReportRunnable(Jobs jobs) {
+			super();
+			this.jobs = jobs;
+		}
+
+		@Override
+		public void run() {
+			// we requets now the focus init
+			// add job in queue
+			myQueueMessage.add(new POJOJobs(jobs));
+			// test now if we have a new Message in pending
+			laterJobsCount--; 
+			newMessageInQueue();
+			
+		}
+
+	}
 }

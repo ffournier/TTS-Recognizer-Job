@@ -21,6 +21,7 @@ public class MyPreferencesJob extends PreferenceFragment {
 	
 	Preference accessibilityPreference;
 	EditTextPreference retryPreference;
+	EditTextPreference laterPreference;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,7 +49,22 @@ public class MyPreferencesJob extends PreferenceFragment {
 			public boolean onPreferenceChange(Preference preference, Object newValue) {
 				Integer value = (Integer) Integer.parseInt((String) newValue);
 				if (value == null || value < 0) {
+					// TODO restore old value
 					newValue = 3;
+				}
+				return true;
+			}
+		});
+		
+		laterPreference = (EditTextPreference) findPreference("later_preference_job");
+		laterPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+			
+			@Override
+			public boolean onPreferenceChange(Preference preference, Object newValue) {
+				Long value = (Long) Long.parseLong((String) newValue);
+				if (value == null || value < 0) {
+					// TODO restore old value
+					newValue = 5;
 				}
 				return true;
 			}

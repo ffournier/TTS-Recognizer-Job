@@ -43,6 +43,10 @@ public class ToolPref {
 		return Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("retry_preference_job", "2"));
 	}
 	
+	public static long getLater(Context context) {
+		return Long.parseLong(PreferenceManager.getDefaultSharedPreferences(context).getString("later_preference_job", "5"));
+	}
+	
 	/**
 	 * Enum Class for Type (All, SMS, CALLBACK, NOTIF_CALENDAR, None)
 	 * @author florian

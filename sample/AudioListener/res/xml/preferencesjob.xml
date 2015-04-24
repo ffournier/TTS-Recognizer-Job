@@ -21,6 +21,14 @@
                 android:digits="1234567890"
                 android:defaultValue="2" />
 		
+		<EditTextPreference
+                android:key="later_preference_job"
+                android:title="@string/title_later_job_preference"
+                android:summary="@string/summary_later_job_preference"
+                android:inputType="number"
+                android:digits="1234567890"
+                android:defaultValue="5" />
+		
 		<Preference android:key="accessibility_preference"
 		    		android:title="Need enable Accessibility Preference for Calendar"/>
 		

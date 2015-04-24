@@ -23,6 +23,8 @@
 	
 	<string name="shut_up">Shut up</string>
 	
+	<string name="later">later</string>
+	
 	<string name="shutup_yourself">Shut up yourself</string>
 	
 	<string name="init_call">Do you want call back or send a message to %1$s ?</string>
@@ -46,5 +48,11 @@
     <string name="summary_retry_job_preference">Retry Jobs</string>
     
     <string name="dialog_retry_job_preference">Dialog retry Jobs</string>
+    
+    <string name="title_later_job_preference">Later Jobs</string>
+    
+    <string name="summary_later_job_preference">Later Jobs in Minute</string>
+    
+    <string name="dialog_later_job_preference">Dialog Later Jobs</string>
     
 </resources>

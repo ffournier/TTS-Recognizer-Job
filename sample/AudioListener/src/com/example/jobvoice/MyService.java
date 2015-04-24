@@ -84,6 +84,8 @@ public class MyService extends TTSJobService {
 			POJOMessage message = (POJOMessage) object;
 			jobs = new Jobs();
 			JobReceiveSMS jobReceiveSMS = new JobReceiveSMS(this, message.getValidateName(), ToolPref.getRetry(this));
+			// TODO change this value
+			JobReceiveSMS jobLaterSMS = new JobReceiveSMS(this, message.getValidateName(), ToolPref.getRetry(this), ToolPref.getLater(this) * 1000 * 60);
 			JobReadSMS jobReadSMS = new JobReadSMS(this, message.getMessage(),message.getValidateName(), ToolPref.getRetry(this));
 			JobSendSMS jobSendSMS = new JobSendSMS(this, message.getPhoneNumber(), ToolPref.getRetry(this));
 			JobSentSMS jobSentSMS = new JobSentSMS();
@@ -92,6 +94,7 @@ public class MyService extends TTSJobService {
 			jobReadSMS.addSonJob(JobAnswer.POSITIVE_ANSWER, jobSendSMS);
 			jobReceiveSMS.addSonJob(JobAnswer.POSITIVE_ANSWER, jobReadSMS);
 			jobReceiveSMS.addSonJob(JobReceiveSMS.FUCK_ANSWER, jobFuckSMS);
+			jobReceiveSMS.addSonJob(JobReceiveSMS.LATER_ANSWER, jobLaterSMS);
 			jobs.addJob(jobReceiveSMS);
 			JobEndSMS jobEnd = new JobEndSMS(this);
 			jobs.addJob(jobEnd);

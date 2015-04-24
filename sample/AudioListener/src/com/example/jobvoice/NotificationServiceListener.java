@@ -1,6 +1,5 @@
 package com.example.jobvoice;
 
-import java.security.acl.NotOwnerException;
 import java.util.List;
 
 import android.accessibilityservice.AccessibilityService;

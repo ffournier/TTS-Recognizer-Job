@@ -26,7 +26,7 @@ public class JobManager implements RecognitionListener {
 	// all jobs to execute
 	Jobs jobs;
 	// currentJob
-	Job job;
+	//Job job;
 	
 	// context
 	Context context;
@@ -131,8 +131,8 @@ public class JobManager implements RecognitionListener {
 	      					if(status != TextToSpeech.ERROR){
 	      						// TODO maybe need to find te good locale ...
 	             	            ttobj.setLanguage(Locale.FRENCH);
-	             	            if (job != null) {
-	             	            	startJob(job);
+	             	            if (jobs.getCurrentJob() != null) {
+	             	            	startJob(jobs.getCurrentJob());
 	             	            }
 	             	        }   
 	      				}
@@ -188,7 +188,7 @@ public class JobManager implements RecognitionListener {
 		if (!recognizerStarted) {
 			Log.i(getClass().getCanonicalName(), "Pause Job");
 			isOnPause = true;
-			if (job != null) {
+			if (this.jobs.getCurrentJob() != null) {
 				stopJob();
 			} else {
 				endJobs(Jobs.ERROR);
@@ -204,8 +204,8 @@ public class JobManager implements RecognitionListener {
 	public void resumeJob() {
 		if (isOnPause) {
 			isOnPause = false;
-			if (job != null) {
-				startJob(job);
+			if (this.jobs.getCurrentJob() != null) {
+				startJob(this.jobs.getCurrentJob());
 			} else {
 				endJobs(Jobs.ERROR);
 			}
@@ -218,11 +218,18 @@ public class JobManager implements RecognitionListener {
 	 * @return
 	 */
 	private boolean startJob(Job job) {
-		this.job = job;
-		if (this.job != null) {
+		this.jobs.setCurrentJob(job);
+		if (this.jobs.getCurrentJob() != null) {
 			if (!isOnPause) {
 				Log.i(getClass().getCanonicalName(), "Speak Begin");
-				speakText();
+				if (job.hasTimer()) {
+					// TODO copy jobs ..
+					Jobs reportJobs = new Jobs(jobs);
+					reportJob(reportJobs, job.getTimer());
+					
+				} else {
+					speakText();
+				}
 			}
 			return true;
 		}
@@ -255,23 +262,36 @@ public class JobManager implements RecognitionListener {
 			this.jInterface.endJobs(result);
 		}
 	}
+	/**
+	 * Call when to reports Job
+	 * @param jobs
+	 * @param timer
+	 */
+	private void reportJob(Jobs jobs, long timer) {
+		if (this.jobs != null) {
+			this.jobs.removeAll();
+		}
+		if (this.jInterface != null) {
+			this.jInterface.reportJobs(jobs, timer);
+		}
+	}
 	
 	/**
 	 * Speak TTS of the current Job
 	 */
 	private void speakText(){
-		if (job != null && !isOnPause) {
+		if (this.jobs.getCurrentJob() != null && !isOnPause) {
 			// save in map the current Job to found him later
 			HashMap<String, String> myHashAlarm = new HashMap<String, String>();
-			myHashAlarm = job.startTTS(myHashAlarm);
-	        int res = ttobj.speak(job.getMessageTTS(), TextToSpeech.QUEUE_FLUSH, myHashAlarm);
+			myHashAlarm = this.jobs.getCurrentJob().startTTS(myHashAlarm);
+	        int res = ttobj.speak(this.jobs.getCurrentJob().getMessageTTS(), TextToSpeech.QUEUE_FLUSH, myHashAlarm);
 			ttobj.setOnUtteranceCompletedListener(new OnUtteranceCompletedListener() {
 				
 				@Override
 				public void onUtteranceCompleted(String utteranceId) {
 					Log.i(getClass().getCanonicalName(), "Speak onUtteranceCompleted");
 					// test which job was executed
-					if (utteranceId.equalsIgnoreCase(job.getId())) {
+					if (utteranceId.equalsIgnoreCase(jobs.getCurrentJob().getId())) {
 						// start recognizer
 							mHandler.post(new Runnable() {
 							
@@ -279,13 +299,13 @@ public class JobManager implements RecognitionListener {
 							public void run() {
 								if (!isOnPause) {
 									// start recognizer 
-									if (job.hasRecognizer()) {
+									if (jobs.getCurrentJob().hasRecognizer()) {
 										startReconizer();
 									} else {
 										// next job
-										job = jobs.getNextJob(job, JobAnswer.NO_VOICE_RECOGNIZE);
-										if (job != null) {
-											startJob(job);
+										jobs.setCurrentJob(jobs.getNextJob(jobs.getCurrentJob(), JobAnswer.NO_VOICE_RECOGNIZE));
+										if (jobs.getCurrentJob() != null) {
+											startJob(jobs.getCurrentJob());
 										} else {
 											endJobs(Jobs.OK);
 										}
@@ -324,14 +344,14 @@ public class JobManager implements RecognitionListener {
 				case SpeechRecognizer.ERROR_NO_MATCH:
 				case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
 					// Retry if we can or pass to next job
-					if (job != null && job.canRetry()) {
-						job.addRetry();
-						startJob(job);
+					if (this.jobs.getCurrentJob() != null && this.jobs.getCurrentJob().canRetry()) {
+						this.jobs.getCurrentJob().addRetry();
+						startJob(this.jobs.getCurrentJob());
 					} else {
 						if (jobs != null) {
-							job = jobs.getNextJobInList();
-							if (job != null) {
-								startJob(job);
+							this.jobs.setCurrentJob(jobs.getNextJobInList());
+							if (this.jobs.getCurrentJob() != null) {
+								startJob(this.jobs.getCurrentJob());
 							} else {
 								endJobs(Jobs.ERROR);
 							}
@@ -348,8 +368,8 @@ public class JobManager implements RecognitionListener {
 						
 						@Override
 						public void run() {
-							if (job != null) {
-								startJob(job);
+							if (jobs.getCurrentJob() != null) {
+								startJob(jobs.getCurrentJob());
 							} else {
 								endJobs(Jobs.ERROR);
 							}
@@ -408,12 +428,12 @@ public class JobManager implements RecognitionListener {
 				}
 				Log.i(getClass().getCanonicalName(), "/************************************/");
 				// get answer of the current job
-				Integer answer = job.onResult(voiceResults);
+				Integer answer = this.jobs.getCurrentJob().onResult(voiceResults);
 				Log.i(getClass().getCanonicalName(), "answer : " + answer);
 				// get next job ( son or in list) in function of answer
-				job = jobs.getNextJob(job, answer);
-				if (job != null) {
-					startJob(job);
+				this.jobs.setCurrentJob(jobs.getNextJob(this.jobs.getCurrentJob(), answer));
+				if (this.jobs.getCurrentJob() != null) {
+					startJob(this.jobs.getCurrentJob());
 				} else {
 					endJobs(Jobs.NOK);
 				}

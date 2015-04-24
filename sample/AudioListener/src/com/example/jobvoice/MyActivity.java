@@ -23,7 +23,7 @@ public class MyActivity extends PreferenceActivity {
 			public void onClick(View v) {
 				Intent service = new Intent(MyActivity.this, MyService.class);
 				service.putExtra(MyService.KEY_NAME, MyService.KEY_SMS);
-				service.putExtra(MyService.KEY_MESSAGE, "mon message de test et je ne sais pas quand très ... , car il me faut un message super long, que je ne pourrais pas dire deux fois. Tu vois ce n'est pas plus compliqué pour cela il ne faut pas dire plus .merci de ta compréhension !");
+				service.putExtra(MyService.KEY_MESSAGE, "mon message de test");
 				service.putExtra(MyService.KEY_PHONE_NUMBER, "montel");
 				MyActivity.this.startService(service); 
 			}

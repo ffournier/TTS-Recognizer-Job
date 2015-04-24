@@ -1,9 +1,11 @@
 package com.android2ee.ttsjob.job;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -17,6 +19,19 @@ import android.util.Log;
  */
 public abstract class Job {
 	
+	public class myList extends ArrayList<String> {
+
+		@Override
+		public boolean contains(Object object) {
+		    String paramStr = (String)object;
+	        for (String s : this) {
+	            if (paramStr.equalsIgnoreCase(s)) return true;
+	        }
+	        return false;
+		}
+
+	}
+	
 	// variable
 	// id of the job
 	String id;
@@ -25,7 +40,7 @@ public abstract class Job {
 	ArrayList<String> matchesNegative;
 	
 	// other matches
-	HashMap<Integer, List<String>> matchesOther;
+	HashMap<Integer, myList> matchesOther;
 	
 	// has recognizer and tts message
 	boolean hasRecognizer;
@@ -33,6 +48,7 @@ public abstract class Job {
 	// retry
 	int retry;
 	int maxRetry;
+	long timer;
 	
 	static final int ERROR_MATCH_NOT_FOUND = 0;
 	static final int ERROR_RECOGNIZER = 1;
@@ -55,6 +71,7 @@ public abstract class Job {
 		this.maxRetry = 0;
 		this.retry = 0;
 		this.matchesOther = new HashMap<>();
+		this.timer = -1;
 	}
 	
 	/**
@@ -68,6 +85,21 @@ public abstract class Job {
 		this(id, messageTTS, hasRecognizer);
 		this.maxRetry = maxRetry;
 		this.matchesOther = new HashMap<>();
+	}
+	
+	/**
+	 * Constructor
+	 * @param id
+	 * @param messageTTS
+	 * @param hasRecognizer
+	 * @param maxRetry
+	 * @param timer
+	 */
+	public Job(String id, String messageTTS, boolean hasRecognizer, int maxRetry, long timer) {
+		this(id, messageTTS, hasRecognizer);
+		this.maxRetry = maxRetry;
+		this.matchesOther = new HashMap<>();
+		this.timer = timer;
 	}
 	
 	/**
@@ -85,7 +117,7 @@ public abstract class Job {
 	 * @param codeResult : code associate to this search
 	 * @param resultsOthers : the list string to search
 	 */
-	protected void addResults(Integer codeResult, ArrayList<String> resultsOthers) throws IllegalArgumentException {
+	protected void addResults(Integer codeResult, myList resultsOthers) throws IllegalArgumentException {
 		
 		if (codeResult >= JobAnswer.EMPTY && codeResult <= JobAnswer.MAX) {
 			throw new IllegalArgumentException("codeResults exists already in JobAnswer");
@@ -156,11 +188,11 @@ public abstract class Job {
 					result = JobAnswer.NEGATIVE_ANSWER;
 					notFound = false;
 				} else if (matchesOther.size() > 0 ) {
-					Iterator<Entry<Integer,List<String>>> it = matchesOther.entrySet().iterator();
+					Iterator<Entry<Integer,myList>> it = matchesOther.entrySet().iterator();
 				    while (it.hasNext() && notFound) {
-				        Map.Entry<Integer, List<String>> pair = it.next();
+				        Map.Entry<Integer, myList> pair = it.next();
 				        List<String> list = pair.getValue();
-				        if (list != null && list.contains(match)) {
+				        if (list != null && list.contains(match.toLowerCase())) {
 				        	result = pair.getKey();
 				        	notFound = false;
 				        }
@@ -265,4 +297,19 @@ public abstract class Job {
 		this.retry = 0;
 	}
 	
+	/**
+	 * Watch if we have a timer
+	 * @return
+	 */
+	public boolean hasTimer() {
+		return timer != -1;
+	}
+	
+	/**
+	 * Getter
+	 * @return
+	 */
+	public long getTimer() {
+		return timer;
+	}
 }

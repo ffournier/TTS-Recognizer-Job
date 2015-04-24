@@ -21,9 +21,11 @@
 	
 	<string name="no">Nein</string>
 	
-	<string name="shut_up">ta gueule</string>
+	<string name="shut_up">sei still</string>
 	
-	<string name="shutup_yourself">Ta gueule toi même</string>
+	<string name="later">später</string>
+	
+	<string name="shutup_yourself">Mund halten Sie sich</string>
 	
 	<string name="init_call">Haben Sie daran zu erinnern, oder eine Nachricht zu wollen %1$s ?</string>
 	
@@ -46,5 +48,11 @@
     <string name="summary_retry_job_preference">Wiederholen Jobs</string>
     
     <string name="dialog_retry_job_preference">Dialog wiederholen Jobs</string>
+    
+    <string name="title_later_job_preference">Später Jobs</string>
+    
+    <string name="summary_later_job_preference">Später Jobs Minute</string>
+    
+    <string name="dialog_later_job_preference">Dialog Später Jobs</string>
     
 </resources>

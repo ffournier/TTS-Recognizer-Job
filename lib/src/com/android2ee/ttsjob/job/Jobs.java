@@ -11,9 +11,29 @@ public class Jobs {
 	
 	ArrayList<Job> jobs = new ArrayList<Job>();
 	
+	// currentJob
+	Job currentJob;
+	
 	public static final int NOK = 1;
 	public static final int OK = 0;
 	public static final int ERROR = -1;
+	
+	/**
+	 * Copy
+	 * @param anotherJobs
+	 */
+	public Jobs() {
+		this.currentJob = null;
+	}
+	
+	/**
+	 * Copy
+	 * @param anotherJobs
+	 */
+	public Jobs(Jobs anotherJobs) {
+		this.jobs = new ArrayList<>(anotherJobs.jobs);
+		this.currentJob = anotherJobs.currentJob;
+	}
 	
 	/**
 	 * Add a new Job
@@ -130,4 +150,14 @@ public class Jobs {
 	public boolean isRunning() {
 		return jobs != null && jobs.size() > 0;
 	}
+	
+	public Job getCurrentJob() {
+		return currentJob;
+	}
+	
+	public void setCurrentJob(Job job) {
+		currentJob = job;
+	}
+	
+	
 }

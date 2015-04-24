@@ -23,6 +23,8 @@
 	
 	<string name="shut_up">cállate</string>
 	
+	<string name="later">más tarde</string>
+	
 	<string name="shutup_yourself">callar a ti mismo</string>
 	
 	<string name="init_call">¿Quieres recordar o enviar un mensaje a %1$s ?</string>
@@ -46,5 +48,11 @@
     <string name="summary_retry_job_preference">Vuelva a intentarlo Jobs</string>
     
     <string name="dialog_retry_job_preference">Diálogo vuelva a intentarlo Jobs</string>
+    
+    <string name="title_later_job_preference">más tarde Jobs</string>
+    
+    <string name="summary_later_job_preference">Más tarde Jobs Minute</string>
+    
+    <string name="dialog_later_job_preference">Dialog Más tarde Jobs</string>
     
 </resources>
